@@ -6,16 +6,13 @@ import { useColorScheme as useRNColorScheme } from 'react-native';
  */
 export function useColorScheme() {
   const [hasHydrated, setHasHydrated] = useState(false);
+  const colorScheme = useRNColorScheme(); // Call hook unconditionally
+  const [initialColorScheme] = useState(colorScheme || 'light'); // Store initial value
 
   useEffect(() => {
     setHasHydrated(true);
   }, []);
 
-  const colorScheme = useRNColorScheme();
-
-  if (hasHydrated) {
-    return colorScheme;
-  }
-
-  return 'light';
+  return hasHydrated ? colorScheme : initialColorScheme;
 }
+
