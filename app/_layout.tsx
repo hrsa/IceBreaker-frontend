@@ -8,6 +8,7 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Head from "expo-router/head";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -30,6 +31,21 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <Head>
+        <title>IceBreaker</title>
+        <meta
+          name="description"
+          content="IceBreaker provides cards with deep questions to help people connect and build stronger relationships."
+        />
+        <meta name="keywords" content="IceBreaker, deep questions, conversation starter, relationships, connection, social app" />
+        <meta property="og:title" content="IceBreaker - Deep Questions for Connection" />
+        <meta
+          property="og:description"
+          content="IceBreaker helps people bond through thought-provoking questions designed to spark meaningful conversations."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://icebreaker.app" />
+      </Head>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false, animation: "fade" }} />
