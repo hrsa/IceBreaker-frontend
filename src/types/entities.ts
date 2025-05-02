@@ -17,10 +17,11 @@ export interface CardPreference {
   id: string;
   profileId: string;
   cardId: string;
-  status: PreferenceAction;
+  status: CardStatus;
   lastInteractionAt: Date;
 }
 
+export type CardStatus = "active" | "archived" | "loved" | "banned";
 export type PreferenceAction = "archive" | "reactivate" | "ban" | "love";
 
 export interface Card {

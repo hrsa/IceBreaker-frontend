@@ -1,6 +1,6 @@
 import { useCategoryStore } from "@/src/stores/categoryStore";
 import React, { useEffect, useState } from "react";
-import { Image, Text, FlatList, TouchableOpacity, Platform, View, useWindowDimensions, ScrollView } from "react-native";
+import { Image, Text, FlatList, TouchableOpacity, View } from "react-native";
 import { useCommonStyles } from "@/constants/Styles";
 import { Category } from "@/src/types/entities";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,17 +8,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { useGameStore } from "@/src/stores/gameStore";
 import { useRootNavigationState, useRouter } from "expo-router";
+import { useCardImages } from "@/hooks/useCardImages";
 
-const categoryImages: Record<string, any> = {
-  work: require("../../assets/images/work.png"),
-  family: require("../../assets/images/family.png"),
-};
-
-const checkboxImage = require("../../assets/images/checkbox.png");
+const { checkboxImage, getCategoryImage } = useCardImages();
 
 export default function CategoriesScreen() {
   const styles = useCommonStyles();
-  const dimensions = useWindowDimensions();
   const categoryStore = useCategoryStore();
   const { categories, getCategories } = categoryStore;
   const gameStore = useGameStore();
@@ -30,6 +25,7 @@ export default function CategoriesScreen() {
   useEffect(() => {
     if (!rootNavigationState?.key) return;
     getCategories();
+    setSelectedCategories([]);
   }, []);
 
   useEffect(() => {
@@ -114,7 +110,7 @@ export default function CategoriesScreen() {
         <View style={{ padding: 12, position: "absolute", width: "100%", height: "100%" }}>
           <View style={{ aspectRatio: "16/9" }}>
             <Image
-              source={categoryImages[item.name_en.toLowerCase()] || require("../../assets/images/family.png")}
+              source={getCategoryImage(item.name_en)}
               style={{
                 width: "80%",
                 height: "100%",

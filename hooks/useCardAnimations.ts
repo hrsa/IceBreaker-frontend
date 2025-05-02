@@ -66,9 +66,7 @@ const useCardAnimations = () => {
       }),
       Animated.spring(moveAnim, {
         toValue: 0,
-        friction: 5,
-        tension: 80,
-        useNativeDriver: true,
+        ...SPRING_BACK_CONFIG,
       }),
     ]).start();
   };

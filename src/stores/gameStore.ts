@@ -1,4 +1,4 @@
-import { User, Profile, Category, CardPreference, Card, PreferenceAction } from "@/src/types/entities";
+import { Profile, Category, CardPreference, Card, PreferenceAction } from "@/src/types/entities";
 import { create } from "zustand";
 import { getRandomCards, RandomCardRequest, updateCardPreference } from "@/src/api/game";
 
@@ -9,10 +9,11 @@ interface GameState {
   categories: Category[] | [];
   cardPreferences: CardPreference[] | [];
   cards: Card[] | [];
+  hasViewedAllCards: boolean;
   clearError: () => void;
   setProfile: (profile: Profile) => void;
   setCategories: (categories: Category[]) => void;
-  getRandomCards: (limit?: number, includeArchived?: boolean) => Promise<void>;
+  getRandomCards: (limit?: number, includeArchived?: boolean, includeLoved?: boolean) => Promise<void>;
   addCards: (newCards: Card[]) => void;
   removeCard: (discardedCard: Card) => void;
   getFirstCard: () => Card | null;
@@ -26,6 +27,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   categories: [],
   cardPreferences: [],
   cards: [],
+  hasViewedAllCards: false,
 
   setProfile: (profile: Profile) => {
     set({ profile });
@@ -35,7 +37,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     set({ categories });
   },
 
-  getRandomCards: async (limit = 1, includeArchived = false) => {
+  getRandomCards: async (limit = 1, includeArchived = false, includeLoved = true) => {
     set({ isLoading: true, error: null });
     if (!get().profile) {
       console.error("No profile to get random cards for");
@@ -43,11 +45,11 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
     const profileId = get().profile!.id;
     const categoryIds = get().categories.map(category => category.id);
-    const data: RandomCardRequest = { profileId, categoryIds, limit, includeArchived };
-    const cards = await getRandomCards(data);
-    console.log("inclue archived: ", includeArchived);
+    const data: RandomCardRequest = { profileId, categoryIds, limit, includeArchived, includeLoved };
+    const { cards, hasViewedAllCards } = await getRandomCards(data);
     console.log(`Got ${cards.length} random cards`);
     get().addCards(cards);
+    set({ hasViewedAllCards });
 
     set({ isLoading: false });
   },

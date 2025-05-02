@@ -7,17 +7,23 @@ export interface RandomCardRequest {
   categoryIds: string[];
   limit?: number;
   includeArchived?: boolean;
+  includeLoved?: boolean;
 }
 
-export const getRandomCards = async (data: RandomCardRequest): Promise<Card[]> => {
+export interface RandomCardResponse {
+  cards: Card[];
+  hasViewedAllCards: boolean;
+}
+
+export const getRandomCards = async (data: RandomCardRequest): Promise<RandomCardResponse> => {
   try {
     const apiClient = await getApiClient();
-    const response = await apiClient.post<Card[]>("/cards/random", data);
+    const response = await apiClient.post<RandomCardResponse>("/cards/random", data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       if (error.response.status === 404) {
-        return [];
+        return { cards: [], hasViewedAllCards: true };
       }
 
       throw new Error(error.response.data.message || "Random card request failed");
