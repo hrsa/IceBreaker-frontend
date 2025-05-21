@@ -1,14 +1,19 @@
-import { Animated, Dimensions, Platform, Text, TouchableOpacity, Image, View } from "react-native";
-import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { Dimensions, Platform, TouchableOpacity, Image, View } from "react-native";
+import { FC, useEffect, useRef, useState } from "react";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colors } from "@/constants/Colors";
 import { Card, PreferenceAction } from "@/src/types/entities";
 import { useCommonStyles } from "@/constants/Styles";
 import * as Haptics from "expo-haptics";
-import { State, PanGestureHandlerGestureEvent, PanGestureHandler } from "react-native-gesture-handler";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import useCardAnimations from "@/hooks/useCardAnimations";
 import { useCardImages } from "@/hooks/useCardImages";
 import { Ionicons } from "@expo/vector-icons";
+import config from "@/src/config/config";
+import { useLanguageStore } from "@/src/stores/languageStore";
+import AdaptiveText from "./AdaptiveText";
+import Animated, { runOnJS } from "react-native-reanimated";
+import { useCardStyles } from "@/src/styles/Card";
 
 interface GameCardProps {
   card: Card;
@@ -17,25 +22,23 @@ interface GameCardProps {
   onDragged?: (dragged: boolean) => void;
 }
 
-const SWIPE_THRESHOLD = 400;
+const SWIPE_THRESHOLD = config.isMobile ? 200 : 400;
 const ROTATION_MAGNITUDE = 0.2;
 const DRAG_THRESHOLD = 10;
-const CARD_WIDTH = 450;
-const CARD_HEIGHT = 300;
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-const isNarrowScreen = screenWidth < 600;
-const isMobile = Platform.OS === "ios" || Platform.OS === "android";
-const shouldRotateCard = isMobile && isNarrowScreen;
 
 const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDragged }) => {
   const colorScheme = useColorScheme() ?? "light";
   const theme = Colors[colorScheme];
   const { getCategoryImage } = useCardImages();
+  const getLocalizedQuestion = useLanguageStore(state => state.getLocalizedCardField(card, "question"));
+  const getLocalizedCategoryName = useLanguageStore(state => state.getLocalizedCardField(card.category, "name"));
   const [flipped, setFlipped] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const totalMovement = useRef(0);
-  const styles = useCommonStyles();
-  const { fadeAnim, pan, rotationAngle, scale, runEntranceAnimation, animateSwipeOut, animateSpringBack } = useCardAnimations();
+
+  const styles = useCardStyles();
+  const { translateX, translateY, rotationAngle, cardAnimatedStyle, runEntranceAnimation, animateSwipeOut, animateSpringBack } =
+    useCardAnimations();
 
   const handleUpdatePreference = () => {
     if (card.cardPreference?.status === "loved") {
@@ -52,7 +55,7 @@ const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDrag
 
   useEffect(() => {
     runEntranceAnimation();
-    setFlipped(true);
+    setFlipped(false);
   }, [card.id]);
 
   useEffect(() => {
@@ -67,174 +70,102 @@ const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDrag
     }
   }, [isDragging, onDragged]);
 
-  const handleGestureEvent = (event: PanGestureHandlerGestureEvent) => {
-    const { translationX, translationY } = event.nativeEvent;
-
-    pan.x.setValue(translationX);
-    pan.y.setValue(translationY);
-
-    const calculatedRotation = (translationY / 200) * ROTATION_MAGNITUDE;
-    rotationAngle.setValue(calculatedRotation);
-
-    const movement = Math.sqrt(translationX * translationX + translationY * translationY);
-    totalMovement.current = movement;
-
-    if (movement > DRAG_THRESHOLD) {
-      setIsDragging(true);
-    }
-  };
-
-  const handleStateChange = (event: PanGestureHandlerGestureEvent) => {
-    const { state, translationX, translationY, velocityX, velocityY } = event.nativeEvent;
-
-    if (state === State.END) {
-      const isHorizontal = Math.abs(translationX) > Math.abs(translationY);
-      const swipeVelocity = { x: velocityX || 1000, y: velocityY || 0 };
-
-      if (isHorizontal && Math.abs(translationX) > SWIPE_THRESHOLD) {
-        const direction = translationX > 0 ? "right" : "left";
-        animateSwipeOut(direction, swipeVelocity, translationY, translationX, handleUpdatePreference);
-      } else if (!isHorizontal && Math.abs(translationY) > SWIPE_THRESHOLD) {
-        const direction = translationY > 0 ? "down" : "up";
-        animateSwipeOut(direction, swipeVelocity, translationY, translationX, handleUpdatePreference);
-      } else {
-        animateSpringBack();
-      }
-      setTimeout(() => {
-        setIsDragging(false);
-        totalMovement.current = 0;
-      }, 50);
-    }
-
-    if (state === State.BEGAN && Platform.OS !== "web") {
-      Haptics.selectionAsync();
-    }
-
-    if (state === State.CANCELLED || state === State.FAILED) {
-      setIsDragging(false);
-      totalMovement.current = 0;
-    }
-  };
-
   const handleCardPress = () => {
-    if (!isDragging && totalMovement.current < DRAG_THRESHOLD) {
+    if (!isDragging) {
       setFlipped(!flipped);
     }
   };
 
-  const cardDimensions = shouldRotateCard
-    ? { width: CARD_HEIGHT, height: CARD_WIDTH }
-    : {
-        width: CARD_WIDTH,
-        height: CARD_HEIGHT,
+  const triggerHaptic = () => {
+    if (Platform.OS !== "web") {
+      Haptics.selectionAsync();
+    }
+  };
+
+  const panGesture = Gesture.Pan()
+    .onStart(() => {
+      "worklet";
+      runOnJS(triggerHaptic)();
+    })
+    .onChange(event => {
+      "worklet";
+      translateX.value = event.translationX;
+      translateY.value = event.translationY;
+
+      rotationAngle.value = (event.translationY / 200) * ROTATION_MAGNITUDE;
+
+      const movement = Math.sqrt(event.translationX * event.translationX + event.translationY * event.translationY);
+
+      if (movement > DRAG_THRESHOLD) {
+        runOnJS(setIsDragging)(true);
+      }
+    })
+    .onEnd(event => {
+      "worklet";
+      const isHorizontal = Math.abs(event.translationX) > Math.abs(event.translationY);
+      const swipeVelocity = {
+        x: event.velocityX || 1000,
+        y: event.velocityY || 0,
       };
 
-  const cardAnimatedStyle = useMemo(
-    () => ({
-      opacity: fadeAnim,
-      transform: [
-        { translateX: pan.x },
-        { translateY: pan.y },
-        { scale },
-        {
-          rotateZ: rotationAngle.interpolate({
-            inputRange: [-0.1, 0, 0.1],
-            outputRange: ["-10deg", "0deg", "10deg"],
-          }),
-        },
-      ],
-    }),
-    [fadeAnim, pan, scale, rotationAngle]
-  );
+      if (isHorizontal && Math.abs(event.translationX) > SWIPE_THRESHOLD) {
+        const direction = event.translationX > 0 ? "right" : "left";
+        animateSwipeOut(direction, swipeVelocity, event.translationY, event.translationX);
+        runOnJS(handleUpdatePreference)();
+      } else if (!isHorizontal && Math.abs(event.translationY) > SWIPE_THRESHOLD) {
+        const direction = event.translationY > 0 ? "down" : "up";
+        animateSwipeOut(direction, swipeVelocity, event.translationY, event.translationX);
+        runOnJS(handleUpdatePreference)();
+      } else {
+        animateSpringBack();
+      }
+
+      runOnJS(setTimeout)(() => {
+        runOnJS(setIsDragging)(false);
+      }, 50);
+    })
+    .onFinalize(() => {
+      "worklet";
+      runOnJS(setTimeout)(() => {
+        runOnJS(setIsDragging)(false);
+      }, 50);
+    });
 
   return (
-    <PanGestureHandler onGestureEvent={handleGestureEvent} onHandlerStateChange={handleStateChange}>
-      <Animated.View
-        style={[
-          cardDimensions,
-          {
-            borderWidth: 1,
-            borderColor: "#FFFFFF",
-            borderRadius: 12,
-            marginVertical: 25,
-            marginHorizontal: 30,
-            backgroundColor: "purple",
-          },
-          cardAnimatedStyle,
-        ]}
-      >
+    <GestureDetector gesture={panGesture}>
+      <Animated.View style={[styles.cardContainer, cardAnimatedStyle]}>
         <TouchableOpacity onPress={handleCardPress} style={{ width: "100%", height: "100%" }}>
-          <View style={{ flex: 1 }}>
+          <View style={styles.card}>
             {flipped ? (
-              <View style={{ margin: "auto", position: "relative", flex: 1 }}>
-                <Image
-                  style={{
-                    top: 25,
-                    left: 0,
-                    height: 60,
-                    maxWidth: cardDimensions.width,
-                    resizeMode: "center",
-                    position: "absolute",
-                    opacity: 0.25,
-                  }}
-                  source={getCategoryImage(card.category!.name_en)}
-                />
-                {card.cardPreference?.status === "loved" && (
-                  <Ionicons
-                    name={"heart"}
-                    size={56}
-                    color={"white"}
-                    style={{
-                      top: 5,
-                      right: 10,
-                      opacity: 0.5,
-                      position: "absolute",
-                    }}
-                  />
-                )}
-                {card.cardPreference?.status === "archived" && (
-                  <Ionicons
-                    name={"archive"}
-                    size={56}
-                    color={"white"}
-                    style={{
-                      top: 5,
-                      right: 10,
-                      opacity: 0.5,
-                      position: "absolute",
-                    }}
-                  />
-                )}
-                <Text
-                  style={[
-                    styles.subtitle,
-                    {
-                      padding: 12,
-                      textAlign: "center",
-                      marginVertical: "auto",
-                      width: cardDimensions.width,
-                    },
-                  ]}
-                >
-                  {card.question_en}
-                </Text>
-              </View>
+              <>
+                <View style={styles.cardFlippedContent}>
+                  {card.cardPreference?.status === "loved" && (
+                    <Ionicons name={"heart"} size={60} color={"white"} style={styles.cardStatusBadge} />
+                  )}
+                  {card.cardPreference?.status === "archived" && (
+                    <Ionicons name={"archive"} size={56} color={"white"} style={styles.cardStatusBadge} />
+                  )}
+                </View>
+                <View style={styles.cardTextContainer}>
+                  <AdaptiveText text={getLocalizedQuestion} fontSize={28} styles={styles.cardText}></AdaptiveText>
+                </View>
+              </>
             ) : (
-              <View style={{ margin: "auto" }}>
-                <Image
-                  style={{
-                    height: cardDimensions.height * 0.5,
-                    maxWidth: cardDimensions.width,
-                    resizeMode: "center",
-                  }}
-                  source={getCategoryImage(card.category!.name_en)}
+              <View style={styles.cardImageContainer}>
+                <Image style={styles.cardImage} source={getCategoryImage(card.category!.id)} />
+                <AdaptiveText
+                  text={getLocalizedCategoryName}
+                  fontSize={32}
+                  numerator={1000}
+                  denominator={0.75}
+                  styles={styles.cardCategoryText}
                 />
               </View>
             )}
           </View>
         </TouchableOpacity>
       </Animated.View>
-    </PanGestureHandler>
+    </GestureDetector>
   );
 };
 

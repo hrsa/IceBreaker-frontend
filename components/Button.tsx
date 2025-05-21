@@ -14,22 +14,24 @@ interface ButtonProps {
   iconColor?: string;
   iconSize?: number;
   iconStyles?: StyleProp<TextStyle>;
+  disabled?: boolean;
 }
 
-const Button: FC<ButtonProps> = ({ text, onPress, buttonStyle, buttonTextStyle, icon, iconColor, iconSize, iconStyles }) => {
+const Button: FC<ButtonProps> = ({ text, onPress, buttonStyle, buttonTextStyle, icon, iconColor, iconSize, iconStyles, disabled }) => {
   const defaultStyles = useCommonStyles();
 
   return (
     <TouchableOpacity style={[defaultStyles.button, buttonStyle]} onPress={onPress}>
       {icon && (
         <Ionicons
+          disabled={disabled ?? false}
           name={icon}
           color={iconColor ?? defaultStyles.text.color}
           size={iconSize ?? 24}
           style={[{ marginRight: text.length > 0 ? 12 : 0 }, iconStyles]}
         />
       )}
-      <Text style={[defaultStyles.buttonText, buttonTextStyle]}>{text}</Text>
+      {text.length > 0 && <Text style={[defaultStyles.buttonText, buttonTextStyle]}>{text}</Text>}
     </TouchableOpacity>
   );
 };
