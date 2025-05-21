@@ -1,50 +1,87 @@
-# Welcome to your Expo app 👋
+# IceMelter
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<p align="center">
+  <img src="https://img.shields.io/badge/React%20Native-0.79-blue.svg" alt="React Native Version" />
+  <img src="https://img.shields.io/badge/Expo-53-green.svg" alt="Expo Version" />
+  <img src="https://img.shields.io/badge/TypeScript-5.8-blue.svg" alt="TypeScript Version" />
+  <img src="https://img.shields.io/badge/License-CC%20BY--NC%204.0-green.svg" alt="License" />
+</p>
 
-## Get started
+## Description
 
-1. Install dependencies
+IceMelter is a mobile application built with React Native and Expo that helps users spark meaningful conversations with anyone.
+The application provides conversation starters, icebreaker questions, and interactive games to facilitate better communication and connection between people.
 
+## Features
+
+- **User-Friendly Interface**: Intuitive and engaging mobile experience
+- **Conversation Starters**: Curated questions to break the ice in any situation
+- **Multiple Languages**: Supports internationalization (i18n) for multiple languages
+- **User Profiles**: Create and manage multiple conversation profiles
+- **Categories**: Browse questions by different categories
+- **Interactive Games**: Engage with conversation games
+- **Cross-Platform**: Works on both iOS and Android devices
+
+## Prerequisites
+
+- Node.js (v24 or higher)
+- Expo CLI
+- Android Studio (for Android development)
+- Xcode (for iOS development, macOS only)
+
+## Available Scripts
+
+- `npm start` - Start the Expo development server
+- `npm run android` - Run on Android device/emulator
+- `npm run ios` - Run on iOS simulator (macOS only)
+- `npm run web` - Run in web browser
+- `npm test` - Run tests
+- `npm run lint` - Run linting
+
+## Project Structure
+
+- `app/` - Main application screens using Expo Router
+  - `(auth)/` - Authenticated screens (profiles, categories, games)
+  - `index.tsx` - Entry point/landing page
+  - `login.tsx`, `register.tsx` - Authentication screens
+- `components/` - Reusable UI components
+- `assets/` - Static assets like images and fonts
+- `src/` - Source code
+  - `config/` - Application configuration
+  - `stores/` - State management with Zustand
+  - `styles/` - Shared styles
+- `constants/` - Application constants
+
+## Installation
+
+1. Clone the repository
+   ```bash
+   git clone https://github.com/yourusername/ice-breaker-frontend.git
+   cd ice-breaker-frontend
+   ```
+
+2. Install dependencies
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. Start the development server
    ```bash
-    npx expo start
+   npm start
    ```
 
-In the output, you'll find options to open the app in a
+4. Follow the instructions in the terminal to open the app on your device or emulator
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Contributing
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Get a fresh project
+## Support
 
-When you're ready, run:
+If you like this project, a coffee is always appreciated!
 
-```bash
-npm run reset-project
-```
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/anton_c)
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Author
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Anton Cherednichenko
