@@ -1,129 +1,128 @@
-import { useCommonStyles } from '@/constants/Styles';
-import { StyleSheet } from 'react-native';
-import { useThemeColor } from '@/hooks/useThemeColor';
-
-/**
- * Hook for Profiles screen styles
- */
+import { useCommonStyles } from "@/constants/Styles";
+import { StyleSheet } from "react-native";
 
 export const useProfileStyles = () => {
   const commonStyles = useCommonStyles();
-  const shadowColor = useThemeColor({}, 'shadow');
+  const profileDimensions = {
+    width: 300,
+    height: 200,
+  };
 
   return StyleSheet.create({
     ...commonStyles,
+    subtitle: {
+      ...commonStyles.subtitle,
+      marginVertical: 10,
+    },
     profilesContainer: {
-      flex: 1,
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'center',
-      alignItems: 'flex-start',
-      marginVertical: 20,
+      paddingBottom: 100,
+      alignItems: "center",
+      minHeight: "100%",
+    },
+    createButonContainer: {
+      position: "absolute",
+      paddingVertical: 25,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      alignItems: "center",
+      justifyContent: "flex-end",
+      backgroundColor: commonStyles.container.backgroundColor,
+    },
+    createButton: {
+      ...commonStyles.button,
+      alignSelf: "center",
+      elevation: 5,
     },
     profileBlob: {
-      ...commonStyles.profileBlob,
-      width: 120,
-      height: 120,
-      borderRadius: 60,
+      ...commonStyles.shadow,
+      ...profileDimensions,
+      borderRadius: 12,
       margin: 12,
-      justifyContent: 'center',
-      alignItems: 'center',
-      boxShadow: [{ offsetX: 0, offsetY: 2, blurRadius: 3, color: shadowColor, spreadDistance: 0 }],
+      justifyContent: "center",
+      alignItems: "center",
       elevation: 2,
       borderWidth: 1,
-      overflow: 'hidden',
     },
     profileBlobContent: {
-      width: '100%',
-      height: '100%',
-      justifyContent: 'center',
-      alignItems: 'center',
+      width: "100%",
+      height: "100%",
+      justifyContent: "center",
+      alignItems: "center",
+      position: "relative",
     },
     profileIcon: {
       width: 50,
       height: 50,
       borderRadius: 25,
-      backgroundColor: 'rgba(0,0,0,0.1)',
-      justifyContent: 'center',
-      alignItems: 'center',
+      backgroundColor: "rgba(0,0,0,0.1)",
+      justifyContent: "center",
+      alignItems: "center",
       marginBottom: 8,
     },
     profileInitial: {
       fontSize: 24,
-      fontWeight: 'bold',
+      fontWeight: "bold",
     },
     profileName: {
-      fontSize: 18,
-      fontWeight: '600',
-      textAlign: 'center',
-      paddingHorizontal: 8,
-      textTransform: 'uppercase',
+      fontFamily: "MerriweatherBold",
+      backgroundColor: "rgba(0,0,0,0.3)",
+      borderRadius: 12,
+      textAlign: "center",
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      textTransform: "uppercase",
+      color: "white",
+      position: "absolute",
+      zIndex: 1,
+    },
+    profileImage: {
+      ...profileDimensions,
+      alignSelf: "center",
+      borderRadius: 12,
     },
     emptyText: {
       ...commonStyles.text,
-      textAlign: 'center',
+      textAlign: "center",
       opacity: 0.7,
       padding: 20,
     },
-    addButton: {
-      justifyContent: 'center',
-      alignSelf: 'center',
-      width: 'auto',
-      paddingVertical: 14,
-      paddingHorizontal: 24,
-      borderRadius: 25,
-      marginBottom: 20,
-      boxShadow: [{ offsetX: 0, offsetY: 2, blurRadius: 3, color: shadowColor, spreadDistance: 0, inset: false }],
-      elevation: 5,
-    },
-    addButtonText: {
-      color: 'white',
-      fontWeight: '600',
-      fontSize: 16,
-      marginLeft: 8,
+    trashZoneText: {
+      fontFamily: "MerriweatherBold",
+      backgroundColor: "rgba(0,0,0,0.5)",
+      padding: 10,
+      borderRadius: 12,
+      color: "white",
+      marginTop: 8,
+      fontSize: 24,
     },
     trashZone: {
-      position: 'absolute',
+      position: "absolute",
       bottom: 0,
       left: 0,
       right: 0,
       height: 200,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: "center",
+      alignItems: "center",
     },
     trashZoneBlur: {
-      width: '100%',
-      height: '80%',
-      borderRadius: 15,
-      justifyContent: 'center',
-      alignItems: 'center',
-      overflow: 'hidden',
+      width: "100%",
+      height: "80%",
+      justifyContent: "center",
+      alignItems: "center",
+      overflow: "hidden",
     },
     input: {
       ...commonStyles.input,
-      width: '100%',
+      width: 200,
       padding: 10,
-      textAlign: 'center',
-      borderWidth: 1,
-      borderRadius: 10,
+      textAlign: "center",
       marginBottom: 20,
-      fontSize: 16,
     },
     cancelButton: {
-      backgroundColor: 'transparent',
+      backgroundColor: "transparent",
       borderWidth: 1,
-      borderColor: 'rgba(255,255,255,0.5)',
-    },
-    cancelButtonText: {
-      color: 'white',
-      fontWeight: '600',
-    },
-    createButton: {
-      // backgroundColor set dynamically
-    },
-    createButtonText: {
-      color: 'white',
-      fontWeight: '600',
+      borderColor: "rgba(255,255,255,0.5)",
     },
   });
 };

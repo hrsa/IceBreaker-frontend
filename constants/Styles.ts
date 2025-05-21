@@ -1,20 +1,28 @@
-import { StyleSheet } from 'react-native';
-import { Colors, ColorScheme } from './Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { StyleSheet } from "react-native";
+import { Colors, ColorScheme } from "./Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
-/**
- * Common styles used across the app
- * This helps reduce duplication and makes the code more maintainable
- *
- * @param theme The current theme colors (light or dark)
- */
-
-/**
- * Creates common styles with the provided theme
- */
 export const createCommonStyles = (theme: ColorScheme) => {
+  const base = {
+    text: {
+      color: theme.text,
+      fontFamily: "Merriweather",
+      fontSize: 16,
+    },
+  };
+
   return StyleSheet.create({
-    // Container styles
+    flexFullWidth: {
+      flex: 1,
+      width: "100%",
+    },
+    centerContent: {
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    shadow: {
+      boxShadow: [{ offsetX: 0, offsetY: 2, blurRadius: 3, color: theme.shadow, spreadDistance: 0 }],
+    },
     container: {
       flex: 1,
       backgroundColor: theme.background,
@@ -23,66 +31,65 @@ export const createCommonStyles = (theme: ColorScheme) => {
       paddingHorizontal: 20,
       paddingTop: 16,
       paddingBottom: 8,
-      alignItems: 'center',
+      alignItems: "center",
     },
     content: {
       flex: 1,
-      justifyContent: 'center',
+      marginHorizontal: "auto",
+      justifyContent: "center",
       padding: 20,
     },
-    scrollViewContent: {
+    scrollView: {
       flexGrow: 1,
     },
     centeredContainer: {
-      width: 'auto',
-      alignItems: 'center',
+      width: "auto",
+      alignItems: "center",
     },
-
-    // Text styles
     title: {
-      fontSize: 34,
-      fontWeight: 'bold',
-      color: theme.text,
+      ...base.text,
+      fontFamily: "MerriweatherBold",
+      fontSize: 36,
       marginBottom: 10,
+      textAlign: "center",
     },
     subtitle: {
+      ...base.text,
+      fontFamily: "MerriweatherBold",
       fontSize: 24,
-      fontWeight: '600',
       marginBottom: 20,
-      color: theme.text,
       opacity: 0.9,
-      textAlign: 'center',
+      textAlign: "center",
     },
     text: {
-      fontSize: 16,
-      color: theme.text,
+      ...base.text,
     },
     errorText: {
-      color: 'red',
+      ...base.text,
+      color: "red",
       marginTop: 10,
-      textAlign: 'center',
+      textAlign: "center",
     },
-
-    // Input styles
     inputContainer: {
       marginBottom: 20,
     },
     label: {
-      fontSize: 16,
+      ...base.text,
       marginBottom: 8,
-      color: theme.text,
+      textAlign: "center",
     },
     input: {
+      ...base.text,
       backgroundColor: theme.inputBackground,
       borderRadius: 8,
       padding: 15,
-      fontSize: 16,
-      color: theme.text,
       borderWidth: 1,
       borderColor: theme.border,
+      marginHorizontal: "auto",
+      width: "auto",
+      minWidth: 250,
     },
 
-    // Button styles
     buttonContainer: {
       marginTop: 10,
     },
@@ -90,51 +97,60 @@ export const createCommonStyles = (theme: ColorScheme) => {
       backgroundColor: theme.primary,
       borderRadius: 8,
       padding: 15,
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexDirection: 'row',
+      alignItems: "center",
+      justifyContent: "center",
+      flexDirection: "row",
+      width: "auto",
+      margin: "auto",
+      paddingHorizontal: 25,
     },
     buttonText: {
-      color: theme.text,
-      fontSize: 16,
-      fontWeight: 'bold',
+      ...base.text,
+      color: "white",
+      fontFamily: "MerriweatherBold",
+    },
+
+    suggestionLink: {
+      ...base.text,
+      color: theme.primary,
+      fontSize: 14,
+      fontFamily: "MerriweatherBold",
     },
 
     // Modal styles
 
     modalOverlay: {
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(0,0,0,0.9)',
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(0,0,0,0.9)",
     },
     modalContent: {
-      width: 'auto',
-      paddingVertical: 30,
-      paddingHorizontal: 30,
+      width: "auto",
+      padding: 30,
       borderRadius: 20,
-      alignItems: 'center',
-      overflow: 'hidden',
+      alignItems: "center",
+      overflow: "hidden",
     },
     modalTitle: {
+      fontFamily: "MerriweatherBold",
       fontSize: 22,
-      fontWeight: 'bold',
-      color: 'white',
+      color: "white",
       marginBottom: 48,
     },
     modalButtons: {
       marginTop: 24,
-      flexDirection: 'row',
-      justifyContent: 'center',
-      width: 'auto',
+      flexDirection: "row",
+      justifyContent: "center",
+      width: "auto",
       gap: 40,
     },
     modalButton: {
       paddingVertical: 12,
       paddingHorizontal: 20,
-      borderRadius: 10,
-      alignItems: 'center',
-      textTransform: 'uppercase',
+      borderRadius: 12,
+      alignItems: "center",
+      textTransform: "uppercase",
     },
 
     // Card styles
@@ -146,26 +162,11 @@ export const createCommonStyles = (theme: ColorScheme) => {
       borderWidth: 1,
       borderColor: theme.border,
     },
-
-    profileBlob: {
-      backgroundColor: theme.profileBackgroundColor,
-      borderColor: theme.profileBackgroundColor,
-    },
-    trashZoneText: {
-      color: theme.text,
-      marginTop: 8,
-      fontSize: 24,
-      fontWeight: '600',
-    },
   });
 };
 
-/**
- * Hook to get common styles with the current color scheme
- * This should be used inside React components
- */
 export const useCommonStyles = () => {
-  const colorScheme = useColorScheme() ?? 'light';
+  const colorScheme = useColorScheme() ?? "light";
   const theme = Colors[colorScheme];
   return createCommonStyles(theme);
 };
