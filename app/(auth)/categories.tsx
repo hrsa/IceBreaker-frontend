@@ -1,44 +1,63 @@
 import { useCategoryStore } from "@/src/stores/categoryStore";
 import React, { useEffect, useState } from "react";
-import { Image, Text, FlatList, TouchableOpacity, View } from "react-native";
+import { Image, Text, FlatList, TouchableOpacity, View, Dimensions } from "react-native";
 import { useCommonStyles } from "@/constants/Styles";
 import { Category } from "@/src/types/entities";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { useGameStore } from "@/src/stores/gameStore";
-import { useRootNavigationState, useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useCardImages } from "@/hooks/useCardImages";
+import Button from "@/components/Button";
+import { useStepStore } from "@/src/stores/stepStore";
+import { useLanguageStore } from "@/src/stores/languageStore";
+import AdaptiveText from "@/components/AdaptiveText";
+import CategoryCard from "@/components/CategoryCard";
 
 const { checkboxImage, getCategoryImage } = useCardImages();
 
 export default function CategoriesScreen() {
   const styles = useCommonStyles();
-  const categoryStore = useCategoryStore();
-  const { categories, getCategories } = categoryStore;
+  const { width } = Dimensions.get("window");
+  const isLargeScreen = width > 600;
+  const step = useStepStore(state => state.step);
+  const language = useLanguageStore(state => state.language);
+  const t = useLanguageStore(state => state.t);
+  const setStep = useStepStore(state => state.setStep);
+  const categories = useCategoryStore(state => state.categories);
+  const getCategories = useCategoryStore(state => state.getCategories);
+  const getField = useLanguageStore(state => state.getLocalizedCardField);
   const gameStore = useGameStore();
-  const { setCategories, profile, getRandomCards } = gameStore;
+  const profile = useGameStore(state => state.profile);
+  const { setCategories, getRandomCards } = gameStore;
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const rootNavigationState = useRootNavigationState();
 
   useEffect(() => {
-    if (!rootNavigationState?.key) return;
+    setStep("categories");
     getCategories();
     setSelectedCategories([]);
-  }, []);
+    setIsLoading(false);
+  }, [step]);
+
+  useFocusEffect(() => {
+    setStep("categories");
+  });
 
   useEffect(() => {
-    if (!rootNavigationState?.key) return;
     if (!profile) {
       router.replace("/profiles");
     }
-  }, [profile, rootNavigationState?.key]);
+  }, [profile]);
 
   const handleStartGame = async () => {
-    setCategories(selectedCategories);
-    await getRandomCards(3);
-    router.push("/game");
+    if (!isLoading) {
+      setIsLoading(true);
+      setCategories(selectedCategories);
+      await getRandomCards(3);
+      router.push("/game");
+    }
   };
 
   const toggleCategorySelection = (category: Category) => {
@@ -53,98 +72,31 @@ export default function CategoriesScreen() {
     return selectedCategories.includes(category);
   };
 
-  const renderItem = ({ item }: { item: Category }) => {
-    return (
-      <TouchableOpacity
-        onPress={() => toggleCategorySelection(item)}
-        style={{
-          borderWidth: categorySelected(item) ? 0 : 1,
-          borderColor: categorySelected(item) ? "rgba(0, 0, 0, 0)" : "#FFFFFF",
-
-          width: 350,
-          height: 450,
-          borderRadius: 12,
-          marginVertical: 25,
-          marginHorizontal: 30,
-          flexDirection: "column",
-          backgroundColor: categorySelected(item) ? "red" : "purple",
-          position: "relative",
-        }}
-      >
-        {categorySelected(item) && (
-          <BlurView
-            intensity={40}
-            tint="light"
-            style={{
-              width: "100%",
-              height: "100%",
-              zIndex: 1,
-              borderRadius: 12,
-
-              padding: -12,
-            }}
-          >
-            <View
-              style={{
-                position: "absolute",
-                width: "100%",
-                height: "100%",
-                borderRadius: 12,
-                borderWidth: 1,
-                borderColor: "rgba(0, 102, 0, 0.8)",
-                backgroundColor: "rgba(0, 102, 0, 0.8)",
-              }}
-            >
-              <Image
-                source={checkboxImage}
-                style={{
-                  width: 100,
-                  height: 100,
-                  margin: "auto",
-                  resizeMode: "contain",
-                }}
-              />
-            </View>
-          </BlurView>
-        )}
-        <View style={{ padding: 12, position: "absolute", width: "100%", height: "100%" }}>
-          <View style={{ aspectRatio: "16/9" }}>
-            <Image
-              source={getCategoryImage(item.name_en)}
-              style={{
-                width: "80%",
-                height: "100%",
-                maxHeight: 200,
-                resizeMode: "contain",
-                margin: "auto",
-              }}
-            />
-          </View>
-          <View style={{ marginTop: 24, marginBottom: 24 }}>
-            <Text style={[styles.title, { textAlign: "center" }]}>
-              {item.name_en} ({item.name_ru})
-            </Text>
-            {item.description_en && <Text style={styles.text}>{item.description_en}</Text>}
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+  const renderItem = ({ item }: { item: Category }) => (
+    <CategoryCard category={item} isSelected={selectedCategories.includes(item)} toggleCategorySelection={toggleCategorySelection} />
+  );
 
   return (
-    <SafeAreaView style={[styles.container, { alignItems: "center" }]}>
-      <View style={{ maxHeight: 2000, maxWidth: "80%", overflowX: "scroll", marginVertical: 25 }}>
-        <Text style={styles.title}>Categories</Text>
-        {categories && categories.length > 0 && (
-          <FlatList contentContainerStyle={{ marginVertical: 15 }} horizontal={true} data={categories} renderItem={renderItem}></FlatList>
-        )}
-      </View>
+    <SafeAreaView style={[styles.container, styles.centerContent]}>
+      <Text style={styles.title}>{t("category:title")}</Text>
+      {categories && categories.length > 0 && (
+        <FlatList
+          data={categories}
+          horizontal={false}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+          numColumns={isLargeScreen ? 3 : 1}
+          contentContainerStyle={isLargeScreen ? { alignItems: "center" } : {}}
+        />
+      )}
       {selectedCategories && selectedCategories.length > 0 && (
-        <View>
-          <TouchableOpacity style={[styles.button]} onPress={() => handleStartGame()} disabled={selectedCategories.length === 0}>
-            <Ionicons name="play" size={24} color="white" style={{ marginRight: 15 }} />
-            <Text style={styles.buttonText}>Start the game</Text>
-          </TouchableOpacity>
+        <View style={{ marginVertical: 25 }}>
+          <Button
+            onPress={() => handleStartGame()}
+            disabled={selectedCategories.length === 0}
+            text={t("common:start_game")}
+            icon="play"
+          ></Button>
         </View>
       )}
     </SafeAreaView>

@@ -1,21 +1,36 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Text, View, Switch, Animated } from "react-native";
-import { useCommonStyles } from "@/constants/Styles";
+import React, { useEffect, useState } from "react";
+import { Text, View, Switch, Image, TouchableOpacity } from "react-native";
 import { Card, PreferenceAction } from "@/src/types/entities";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGameStore } from "@/src/stores/gameStore";
-import { useRootNavigationState, useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import Button from "@/components/Button";
 import Loading from "@/components/Loading";
 import GameCard from "@/components/GameCard";
 import { getStatusFromAction } from "@/src/helpers/card-status-action";
 import { Ionicons } from "@expo/vector-icons";
 import Modal from "@/components/Modal";
+import config from "@/src/config/config";
+import { useLanguageStore } from "@/src/stores/languageStore";
+import { useLanguageImages } from "@/hooks/useLanguageImages";
+import { useStepStore } from "@/src/stores/stepStore";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import { useGameStyles } from "@/src/styles/Game";
+import { useTranslation } from "react-i18next";
 
 export default function GameScreen() {
-  const styles = useCommonStyles();
+  const language = useLanguageStore(state => state.language);
+  const t = useLanguageStore(state => state.t);
+  const switchLanguage = useLanguageStore(state => state.switchLanguage);
+  const styles = useGameStyles();
+  const step = useStepStore(state => state.step);
+  const setStep = useStepStore(state => state.setStep);
   const gameStore = useGameStore();
-  const { getRandomCards, cards, hasViewedAllCards, categories, profile, getFirstCard, updateCardPreference } = gameStore;
+  const cards = useGameStore(state => state.cards);
+  const hasViewedAllCards = useGameStore(state => state.hasViewedAllCards);
+  const categories = useGameStore(state => state.categories);
+  const profile = useGameStore(state => state.profile);
+  const { getRandomCards, getFirstCard, updateCardPreference, resetGame } = gameStore;
   const [currentCard, setCurrentCard] = useState<Card | null>(null);
   const [lastCard, setLastCard] = useState<Card | null>(null);
   const [cardFlipped, setCardFlipped] = useState<boolean>(false);
@@ -23,22 +38,35 @@ export default function GameScreen() {
   const [includeArchived, setIncludeArchived] = useState<boolean>(false);
   const [includeLoved, setIncludeLoved] = useState<boolean>(true);
   const [showNoCardsModal, setShowNoCardsModal] = useState<boolean>(false);
+  const { getLanguageImage } = useLanguageImages();
   const router = useRouter();
-  const rootNavigationState = useRootNavigationState();
-  const buttonsOpacity = useRef(new Animated.Value(0)).current;
+  const buttonsOpacity = useSharedValue(0);
+  const buttonsAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: buttonsOpacity.value,
+    };
+  });
+
   const buttonsPointerEvents = isDragging || !cardFlipped ? "none" : "auto";
 
   useEffect(() => {
-    if (!rootNavigationState?.key) return;
+    setStep("game");
     if (!profile) router.push("/profiles");
     if (profile && !categories) router.push("/categories");
-    const firstCard = getFirstCard();
-    setCurrentCard(firstCard);
+    resetGame().then(() => {
+      const firstCard = getFirstCard();
+      setCurrentCard(firstCard);
 
-    if (!firstCard || hasViewedAllCards) {
-      setShowNoCardsModal(true);
-    }
-  }, [rootNavigationState?.key]);
+      if (!firstCard || hasViewedAllCards) {
+        setShowNoCardsModal(true);
+      }
+    });
+  }, [profile, categories]);
+
+  useFocusEffect(() => {
+    console.warn(step);
+    setStep("game");
+  });
 
   useEffect(() => {
     const getCards = async () => await getRandomCards(3, includeArchived, includeLoved);
@@ -54,21 +82,13 @@ export default function GameScreen() {
 
   const handleCardFlipped = (isFlipped: boolean) => {
     setCardFlipped(isFlipped);
-    Animated.timing(buttonsOpacity, {
-      toValue: isFlipped ? 1 : 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
+    buttonsOpacity.value = withTiming(isFlipped ? 1 : 0, { duration: 300 });
   };
 
   const handleCardDragged = (dragging: boolean) => {
     setIsDragging(dragging);
     if (cardFlipped) {
-      Animated.timing(buttonsOpacity, {
-        toValue: dragging ? 0 : 1,
-        duration: 150,
-        useNativeDriver: true,
-      }).start();
+      buttonsOpacity.value = withTiming(dragging ? 0 : 1, { duration: 150 });
     }
   };
 
@@ -87,7 +107,6 @@ export default function GameScreen() {
       };
     }
     setLastCard(card);
-    console.log("Updated card:", card, action);
     setCurrentCard(getFirstCard());
   };
 
@@ -97,35 +116,32 @@ export default function GameScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { alignItems: "center", flex: 1 }]}>
-      <View style={{}}>
-        {gameStore.isLoading && <Loading />}
+    <SafeAreaView style={[styles.container, styles.centerContent]}>
+      <View style={[styles.container, styles.centerContent]}>
+        {gameStore.isLoading && !currentCard && <Loading />}
         {gameStore.error && <Text style={styles.errorText}>{gameStore.error}</Text>}
-        <Text style={styles.subtitle}>wagabuga</Text>
         {currentCard ? (
           <>
             <GameCard
+              key={currentCard.id}
               card={currentCard}
               updatePreference={handleCardPreference}
               onFlipped={handleCardFlipped}
               onDragged={handleCardDragged}
             />
             <Animated.View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginTop: 25,
-                opacity: buttonsOpacity,
-                minHeight: 60,
-                gap: 30,
-              }}
-              pointerEvents={buttonsPointerEvents}
+              style={[
+                {
+                  ...styles.gameButtonsContainer,
+                  pointerEvents: buttonsPointerEvents,
+                },
+                buttonsAnimatedStyle,
+              ]}
             >
               {lastCard && lastCard.id !== currentCard.id && (
                 <Button
                   text=""
-                  buttonStyle={{ backgroundColor: "#2739bc", borderRadius: 999, padding: 20 }}
+                  buttonStyle={styles.undoButton}
                   iconSize={45}
                   icon={"arrow-undo"}
                   onPress={() => setCurrentCard(lastCard)}
@@ -134,7 +150,7 @@ export default function GameScreen() {
               {currentCard?.cardPreference?.status !== "loved" ? (
                 <Button
                   text=""
-                  buttonStyle={{ backgroundColor: "#F06292", borderRadius: 999, padding: 20 }}
+                  buttonStyle={styles.loveButton}
                   iconSize={45}
                   icon={"heart"}
                   onPress={() => handleCardPreference(currentCard, "love")}
@@ -142,48 +158,47 @@ export default function GameScreen() {
               ) : (
                 <Button
                   text=""
-                  buttonStyle={{ backgroundColor: "#F06292", borderRadius: 999, padding: 20 }}
+                  buttonStyle={styles.loveButton}
                   iconSize={45}
                   icon={"heart-dislike"}
                   onPress={() => handleCardPreference(currentCard, "reactivate")}
                 />
               )}
-              <Button
-                text=""
-                buttonStyle={{ backgroundColor: "#D32F2F", borderRadius: 999, padding: 20 }}
-                iconSize={45}
-                icon={"ban"}
-                onPress={() => handleCardPreference(currentCard, "ban")}
-              />
+              <View style={{}}>
+                <TouchableOpacity onPress={switchLanguage}>
+                  <Image source={getLanguageImage(language)} style={styles.languageButton}></Image>
+                </TouchableOpacity>
+              </View>
             </Animated.View>
           </>
         ) : (
           <Text style={styles.text}>No cards left!</Text>
         )}
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 10,
-            alignItems: "center",
-            marginTop: 35,
-            marginHorizontal: "auto",
-          }}
-        >
-          <Switch
-            value={includeArchived}
-            onValueChange={() => setIncludeArchived(!includeArchived)}
-            trackColor={{ false: styles.text.color, true: "green" }}
-            style={{ margin: "auto", alignSelf: "center", marginRight: 10 }}
-          />
-          <Ionicons name={"archive"} color={includeArchived ? "green" : styles.text.color} size={42} />
+        <View style={styles.gameSwitchesContainer}>
+          <View style={styles.switchContainer}>
+            <Switch
+              value={includeArchived}
+              onValueChange={() => setIncludeArchived(!includeArchived)}
+              trackColor={{ false: styles.text.color, true: "green" }}
+              style={styles.switch}
+            />
+            <Ionicons name={"archive"} color={includeArchived ? "green" : styles.text.color} size={42} />
+          </View>
 
-          <Switch
-            value={includeLoved}
-            onValueChange={() => setIncludeLoved(!includeLoved)}
-            trackColor={{ false: styles.text.color, true: "#F06292" }}
-            style={{ margin: "auto", alignSelf: "center", marginRight: 10, marginLeft: 40 }}
-          />
-          <Ionicons name={"heart"} color={includeLoved ? "#F06292" : styles.text.color} size={42} />
+          <View
+            style={{
+              ...styles.switchContainer,
+              marginLeft: config.isMobile ? 0 : 40,
+            }}
+          >
+            <Switch
+              value={includeLoved}
+              onValueChange={() => setIncludeLoved(!includeLoved)}
+              trackColor={{ false: styles.text.color, true: "#F06292" }}
+              style={styles.switch}
+            />
+            <Ionicons name={"heart"} color={includeLoved ? "#F06292" : styles.text.color} size={42} />
+          </View>
         </View>
       </View>
       <Modal
@@ -207,10 +222,8 @@ export default function GameScreen() {
         <View style={{ alignItems: "center", marginBottom: 20 }}>
           <Ionicons name="alert-circle-outline" size={50} color="#F06292" />
         </View>
-        <Text style={[styles.text, { textAlign: "center", marginBottom: 10 }]}>You've gone through all available cards!</Text>
-        <Text style={[styles.text, { textAlign: "center" }]}>
-          Try changing your filters to include archived or favourite cards - or come back later for more.
-        </Text>
+        <Text style={[styles.text, { textAlign: "center", marginBottom: 10 }]}>{t("game:no_more_cards")}</Text>
+        <Text style={[styles.text, { textAlign: "center" }]}>{t("game:change_filters")}</Text>
       </Modal>
     </SafeAreaView>
   );
