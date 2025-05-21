@@ -3,13 +3,20 @@
 # dependencies
 node_modules/
 
+# IDE
+.idea/
+
+
 # Expo
 .expo/
 dist/
 web-build/
+.cache/
 expo-env.d.ts
 
 # Native
+android/
+ios/
 *.orig.*
 *.jks
 *.p8
