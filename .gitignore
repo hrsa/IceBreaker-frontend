@@ -45,3 +45,4 @@ yarn-error.*
 app-example
 /icebreaker.json
 /.idea/
+/.env

@@ -8,6 +8,7 @@ import { useAuthStore } from "@/src/stores/authStore";
 import { useLoginStyles } from "@/src/styles/Login";
 import { useLanguageStore } from "@/src/stores/languageStore";
 import { useAlert } from "@/hooks/useAlert";
+import LanguageSelector from "@/components/LanguageSelector";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -72,9 +73,9 @@ export default function LoginScreen() {
         <ScrollView contentContainerStyle={styles.scrollView} keyboardShouldPersistTaps="handled">
           <View style={styles.content}>
             <View style={styles.header}>
-              {/*<Text style={styles.title}>{t("common:welcome")}</Text>*/}
               <Text style={styles.title}>🧊IceMelter🧊</Text>
               <Text style={styles.subtitle}>{t("login:subtitle")}</Text>
+              <LanguageSelector />
             </View>
 
             <View style={styles.inputContainer}>
