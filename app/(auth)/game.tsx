@@ -16,7 +16,6 @@ import { useLanguageImages } from "@/hooks/useLanguageImages";
 import { useStepStore } from "@/src/stores/stepStore";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useGameStyles } from "@/src/styles/Game";
-import { useTranslation } from "react-i18next";
 
 export default function GameScreen() {
   const language = useLanguageStore(state => state.language);

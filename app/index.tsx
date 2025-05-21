@@ -1,6 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, Image } from "react-native";
 import LanguageSelector from "@/components/LanguageSelector";
 import { Redirect, useRouter } from "expo-router";
 import { useAuthStore } from "@/src/stores/authStore";

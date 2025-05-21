@@ -1,4 +1,4 @@
-import { Stack, useRouter, useSegments, SplashScreen } from "expo-router";
+import { Stack, useRouter, SplashScreen } from "expo-router";
 import { useAuthStore } from "@/src/stores/authStore";
 import { useEffect, useState } from "react";
 import { View, Text } from "react-native";
@@ -10,11 +10,9 @@ SplashScreen.preventAutoHideAsync();
 
 export default function AuthLayout() {
   const router = useRouter();
-  const segments = useSegments();
   const [isAuthReady, setIsAuthReady] = useState(false);
   const getMe = useAuthStore(state => state.getMe);
   const user = useAuthStore(state => state.user);
-  const isAuthLoading = useAuthStore(state => state.isLoading);
   const [loaded] = useFonts({
     SpaceMono: require("../../assets/fonts/SpaceMono-Regular.ttf"),
     Merriweather: require("../../assets/fonts/merriweather.regular.ttf"),

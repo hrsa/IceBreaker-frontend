@@ -22,7 +22,6 @@ export default function LoginScreen() {
   const placeholderColor = useThemeColor({}, "placeholder");
 
   const login = useAuthStore(state => state.login);
-  const user = useAuthStore(state => state.user);
   const getMe = useAuthStore(state => state.getMe);
   const isLoading = useAuthStore(state => state.isLoading);
   const error = useAuthStore(state => state.error);

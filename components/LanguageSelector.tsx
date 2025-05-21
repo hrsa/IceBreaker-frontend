@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, TouchableOpacity, Image } from "react-native";
 import { useLanguageStore, SupportedLanguage } from "@/src/stores/languageStore";
 import { useLanguageImages } from "@/hooks/useLanguageImages";
 import { useLanguageSelectorStyles } from "@/src/styles/LanguageSelector";

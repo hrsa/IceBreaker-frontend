@@ -1,20 +1,15 @@
 import { useCategoryStore } from "@/src/stores/categoryStore";
 import React, { useEffect, useState } from "react";
-import { Image, Text, FlatList, TouchableOpacity, View, Dimensions } from "react-native";
+import { Text, FlatList, View, Dimensions } from "react-native";
 import { useCommonStyles } from "@/constants/Styles";
 import { Category } from "@/src/types/entities";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { BlurView } from "expo-blur";
 import { useGameStore } from "@/src/stores/gameStore";
 import { useFocusEffect, useRouter } from "expo-router";
-import { useCardImages } from "@/hooks/useCardImages";
 import Button from "@/components/Button";
 import { useStepStore } from "@/src/stores/stepStore";
 import { useLanguageStore } from "@/src/stores/languageStore";
-import AdaptiveText from "@/components/AdaptiveText";
 import CategoryCard from "@/components/CategoryCard";
-
-const { checkboxImage, getCategoryImage } = useCardImages();
 
 export default function CategoriesScreen() {
   const styles = useCommonStyles();
@@ -26,7 +21,6 @@ export default function CategoriesScreen() {
   const setStep = useStepStore(state => state.setStep);
   const categories = useCategoryStore(state => state.categories);
   const getCategories = useCategoryStore(state => state.getCategories);
-  const getField = useLanguageStore(state => state.getLocalizedCardField);
   const gameStore = useGameStore();
   const profile = useGameStore(state => state.profile);
   const { setCategories, getRandomCards } = gameStore;
@@ -66,10 +60,6 @@ export default function CategoriesScreen() {
     } else {
       setSelectedCategories([...selectedCategories, category]);
     }
-  };
-
-  const categorySelected = (category: Category) => {
-    return selectedCategories.includes(category);
   };
 
   const renderItem = ({ item }: { item: Category }) => (

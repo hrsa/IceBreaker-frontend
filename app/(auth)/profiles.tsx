@@ -40,24 +40,16 @@ export default function ProfilesScreen() {
   const [modalError, setModalError] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const {
-    draggingIndex,
-    showTrashZone,
-    translateX,
-    translateY,
-    trashZoneOpacity,
-    trashZoneAnimatedStyle,
-    getGestureHandlerProps,
-    canItemBeClicked,
-  } = useDragGesture({
-    trashZoneHeight: styles.trashZone.height,
-    onDelete: index => {
-      const profileToDelete = localProfiles[index];
-      if (profileToDelete) {
-        handleDeleteProfile(profileToDelete.id);
-      }
-    },
-  });
+  const { draggingIndex, showTrashZone, translateX, translateY, trashZoneAnimatedStyle, getGestureHandlerProps, canItemBeClicked } =
+    useDragGesture({
+      trashZoneHeight: styles.trashZone.height,
+      onDelete: index => {
+        const profileToDelete = localProfiles[index];
+        if (profileToDelete) {
+          handleDeleteProfile(profileToDelete.id);
+        }
+      },
+    });
 
   useEffect(() => {
     setStep("profiles");

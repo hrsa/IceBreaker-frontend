@@ -24,7 +24,6 @@ export default function ForgotPasswordScreen() {
   const isLoading = useAuthStore(state => state.isLoading);
   const error = useAuthStore(state => state.error);
   const requestPasswordReset = useAuthStore(state => state.requestPasswordReset);
-  const clearError = useAuthStore(state => state.clearError);
   const { alert } = useAlert();
 
   useEffect(() => {

@@ -1,9 +1,6 @@
-import { Dimensions, Platform, TouchableOpacity, Image, View } from "react-native";
-import { FC, useEffect, useRef, useState } from "react";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { Colors } from "@/constants/Colors";
+import { Platform, TouchableOpacity, Image, View } from "react-native";
+import { FC, useEffect, useState } from "react";
 import { Card, PreferenceAction } from "@/src/types/entities";
-import { useCommonStyles } from "@/constants/Styles";
 import * as Haptics from "expo-haptics";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import useCardAnimations from "@/hooks/useCardAnimations";
@@ -25,11 +22,8 @@ interface GameCardProps {
 const SWIPE_THRESHOLD = config.isMobile ? 200 : 400;
 const ROTATION_MAGNITUDE = 0.2;
 const DRAG_THRESHOLD = 10;
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDragged }) => {
-  const colorScheme = useColorScheme() ?? "light";
-  const theme = Colors[colorScheme];
   const { getCategoryImage } = useCardImages();
   const getLocalizedQuestion = useLanguageStore(state => state.getLocalizedCardField(card, "question"));
   const getLocalizedCategoryName = useLanguageStore(state => state.getLocalizedCardField(card.category, "name"));
@@ -56,7 +50,7 @@ const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDrag
   useEffect(() => {
     runEntranceAnimation();
     setFlipped(false);
-  }, [card.id]);
+  }, [card.id, runEntranceAnimation]);
 
   useEffect(() => {
     if (onFlipped) {
