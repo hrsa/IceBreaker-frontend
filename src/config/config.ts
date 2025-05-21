@@ -22,7 +22,6 @@ const envConfig = {
     isMobile: IS_MOBILE,
     api: {
       url: "http://192.168.2.2:800/api",
-      //url: "https://icemelter.app/api",
       timeout: 10000,
       debugRequests: true,
     },

@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "ice-breaker-frontend",
-    "slug": "ice-breaker-frontend",
-    "version": "1.0.0",
+    "name": "IceMelter",
+    "slug": "ice-melter",
+    "version": "1.0.2",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/icemelter-icon-1024.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -12,30 +12,39 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.hrsa.icemelter",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/icemelter-icon.png",
+        "backgroundColor": "#f8e1c3"
       }
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/icemelter-icon-1024.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/icemelter-icon-1024.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#f8e1c3"
         }
-      ]
+      ],
+      "expo-secure-store",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "922c3396-9504-449a-983d-1f54c30688f4"
+      }
     }
   }
 }
