@@ -50,7 +50,7 @@ const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDrag
   useEffect(() => {
     runEntranceAnimation();
     setFlipped(false);
-  }, [card.id, runEntranceAnimation]);
+  }, [card.id]);
 
   useEffect(() => {
     if (onFlipped) {
