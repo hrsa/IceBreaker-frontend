@@ -1,3 +1,7 @@
+interface Entity {
+  [key: string]: string | number | boolean | Date | object | null | undefined;
+}
+
 export interface User {
   id: string;
   email: string;
@@ -5,6 +9,9 @@ export interface User {
   isActivated: boolean;
   isAdmin: boolean;
   createdAt: Date;
+  credits: number;
+  telegramId?: string;
+  secretPhrase?: string;
 }
 
 export interface Profile {
@@ -24,20 +31,20 @@ export interface CardPreference {
 export type CardStatus = "active" | "archived" | "loved" | "banned";
 export type PreferenceAction = "archive" | "reactivate" | "ban" | "love";
 
-export interface Card {
+export interface Card extends Entity {
   id: string;
   question_en: string;
   question_ru: string;
   question_fr: string;
   question_it: string;
   categoryId: string;
-  category?: Category;
+  category: Category;
   cardPreference?: CardPreference;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface Category {
+export interface Category extends Entity {
   id: string;
   name_en: string;
   name_ru: string;

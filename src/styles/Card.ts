@@ -4,7 +4,7 @@ import config from "@/src/config/config";
 
 export const useCardStyles = () => {
   const commonStyles = useCommonStyles();
-  const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+  const { width: screenWidth } = Dimensions.get("window");
   const isNarrowScreen = screenWidth < 600;
   const shouldRotateCard = config.isMobile && isNarrowScreen;
   const cardColor = "rgb(181,127,87)";

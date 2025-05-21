@@ -1,6 +1,6 @@
-import { User, Profile, Category, CardPreference, Card } from '@/src/types/entities';
-import { create } from 'zustand';
-import { getCategories } from '@/src/api/category';
+import { Category } from "@/src/types/entities";
+import { create } from "zustand";
+import { getCategories } from "@/src/api/category";
 
 interface CategoryState {
   isLoading: boolean;
@@ -26,7 +26,7 @@ export const useCategoryStore = create<CategoryState>((set, get) => ({
     } catch (error) {
       set({
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Categories download failed',
+        error: error instanceof Error ? error.message : "Categories download failed",
       });
       throw error;
     }

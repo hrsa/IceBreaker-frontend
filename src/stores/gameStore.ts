@@ -17,6 +17,7 @@ interface GameState {
   addCards: (newCards: Card[]) => void;
   removeCard: (discardedCard: Card) => void;
   getFirstCard: () => Card | null;
+  resetGame: () => Promise<void>;
   updateCardPreference: (card: Card, action: PreferenceAction) => Promise<void>;
 }
 
@@ -35,6 +36,14 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   setCategories: (categories: Category[]) => {
     set({ categories });
+  },
+
+  resetGame: async () => {
+    set({
+      cards: [],
+      isLoading: true,
+    });
+    await get().getRandomCards();
   },
 
   getRandomCards: async (limit = 1, includeArchived = false, includeLoved = true) => {
