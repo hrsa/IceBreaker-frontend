@@ -114,7 +114,7 @@ export const getToken = async (): Promise<string | null> => {
 
 export const deleteToken = async () => {
   if (Platform.OS === "web") {
-    document.cookie = `bearerToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; Secure; SameSite=Strict`;
+    document.cookie = `bearerToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=${window.location.hostname}; path=/; Secure; SameSite=Strict`;
   } else {
     await SecureStore.deleteItemAsync("accessToken");
   }
