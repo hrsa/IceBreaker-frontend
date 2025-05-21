@@ -1,136 +1,127 @@
-import { Animated, Dimensions, Platform } from "react-native";
+import { Dimensions, Platform } from "react-native";
 import * as Haptics from "expo-haptics";
-import { useRef } from "react";
+import { useSharedValue, withTiming, withSpring, useAnimatedStyle, Easing, interpolate, runOnJS } from "react-native-reanimated";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 type SwipeDirection = "left" | "right" | "up" | "down";
 
-const SWIPE_OUT_CONFIG = {
-  friction: 5,
-  tension: 40,
-  restSpeedThreshold: 100,
-  restDisplacementThreshold: 100,
-  useNativeDriver: true,
-  overshootClamping: true,
+const ENTRANCE_ANIMATION_CONFIG = {
+  duration: 300,
+  easing: Easing.bezier(0.25, 0.1, 0.25, 1),
 };
 
 const SPRING_BACK_CONFIG = {
-  friction: 6,
-  tension: 60,
-  velocity: 3,
-  useNativeDriver: true,
+  damping: 15,
+  stiffness: 200,
+  mass: 0.5,
+  overshootClamping: false,
+  restSpeedThreshold: 0.5,
+  restDisplacementThreshold: 0.5,
 };
 
-const ENTRANCE_ANIMATION_CONFIG = {
-  duration: 300,
-  useNativeDriver: true,
+const SWIPE_OUT_CONFIG = {
+  damping: 12,
+  stiffness: 150,
+  mass: 1,
+  overshootClamping: true,
+  restSpeedThreshold: 100,
+  restDisplacementThreshold: 100,
 };
 
-const triggerHapticFeedback = (style: Haptics.ImpactFeedbackStyle = Haptics.ImpactFeedbackStyle.Medium) => {
-  if (Platform.OS !== "web") {
-    Haptics.impactAsync(style);
+const triggerHapticFeedback = () => {
+  if (Platform.OS === "web") return;
+
+  try {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+  } catch (error) {
+    console.log("Haptic feedback not available", error);
   }
 };
 
-const useCardAnimations = () => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const moveAnim = useRef(new Animated.Value(100)).current;
-  const pan = useRef(new Animated.ValueXY()).current;
-  const rotationAngle = useRef(new Animated.Value(0)).current;
-
-  const scale = Animated.add(
-    pan.x.interpolate({
-      inputRange: [-300, 0, 300],
-      outputRange: [0.9, 1, 0.9],
-      extrapolate: "clamp",
-    }),
-    pan.y.interpolate({
-      inputRange: [-300, 0, 300],
-      outputRange: [0.9, 0, 0.9],
-      extrapolate: "clamp",
-    })
-  ).interpolate({
-    inputRange: [0.9, 1, 1.9],
-    outputRange: [0.95, 1, 0.95],
-  });
+export default function useCardAnimations() {
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const rotationAngle = useSharedValue(0);
+  const fadeAnim = useSharedValue(1);
+  const moveAnim = useSharedValue(0);
 
   const runEntranceAnimation = () => {
-    fadeAnim.setValue(0);
-    moveAnim.setValue(100);
+    fadeAnim.value = 0;
+    moveAnim.value = 100;
 
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        ...ENTRANCE_ANIMATION_CONFIG,
-      }),
-      Animated.spring(moveAnim, {
-        toValue: 0,
-        ...SPRING_BACK_CONFIG,
-      }),
-    ]).start();
+    fadeAnim.value = withTiming(1, ENTRANCE_ANIMATION_CONFIG);
+    moveAnim.value = withSpring(0, SPRING_BACK_CONFIG);
   };
 
-  const animateSwipeOut = (
-    direction: SwipeDirection,
-    velocity: { x: number; y: number },
-    translationY: number,
-    translationX: number,
-    onComplete?: (direction: SwipeDirection) => void
-  ) => {
-    let toValue = { x: 0, y: 0 };
+  const animateSwipeOut = (direction: SwipeDirection, velocity: { x: number; y: number }, translationY: number, translationX: number) => {
+    "worklet";
+    let targetX = 0;
+    let targetY = 0;
 
     switch (direction) {
       case "left":
-        toValue = { x: -SCREEN_WIDTH, y: translationY * 0.5 };
+        targetX = -SCREEN_WIDTH;
+        targetY = translationY * 0.5;
         break;
       case "right":
-        toValue = { x: SCREEN_WIDTH, y: translationY * 0.5 };
+        targetX = SCREEN_WIDTH;
+        targetY = translationY * 0.5;
         break;
       case "up":
-        toValue = { x: translationX * 0.5, y: -SCREEN_HEIGHT };
+        targetX = translationX * 0.5;
+        targetY = -SCREEN_HEIGHT;
         break;
       case "down":
-        toValue = { x: translationX * 0.5, y: SCREEN_HEIGHT };
+        targetX = translationX * 0.5;
+        targetY = SCREEN_HEIGHT;
         break;
     }
 
-    triggerHapticFeedback();
+    runOnJS(triggerHapticFeedback)();
 
-    Animated.spring(pan, {
-      toValue,
-      velocity,
-      ...SWIPE_OUT_CONFIG,
-    }).start(() => {
-      if (onComplete) onComplete(direction);
-      pan.setValue({ x: 0, y: 0 });
-      rotationAngle.setValue(0);
-    });
+    translateX.value = withSpring(
+      targetX,
+      {
+        ...SWIPE_OUT_CONFIG,
+        velocity: velocity.x,
+      },
+      () => {
+        translateX.value = 0;
+        translateY.value = 0;
+        rotationAngle.value = 0;
+      }
+    );
   };
 
   const animateSpringBack = () => {
-    Animated.parallel([
-      Animated.spring(pan, {
-        toValue: { x: 0, y: 0 },
-        ...SPRING_BACK_CONFIG,
-      }),
-      Animated.spring(rotationAngle, {
-        toValue: 0,
-        ...SPRING_BACK_CONFIG,
-      }),
-    ]).start();
+    "worklet";
+    translateX.value = withSpring(0, SPRING_BACK_CONFIG);
+    translateY.value = withSpring(0, SPRING_BACK_CONFIG);
+    rotationAngle.value = withSpring(0, SPRING_BACK_CONFIG);
   };
 
+  const cardAnimatedStyle = useAnimatedStyle(() => {
+    const scale = interpolate(Math.abs(translateX.value) + Math.abs(translateY.value), [0, 300], [1, 0.95], { extrapolateRight: "clamp" });
+
+    return {
+      opacity: fadeAnim.value,
+      transform: [
+        { translateX: translateX.value },
+        { translateY: translateY.value },
+        { rotateZ: `${rotationAngle.value * 10}deg` },
+        { scale },
+      ],
+    };
+  });
+
   return {
-    fadeAnim,
-    moveAnim,
-    pan,
+    translateX,
+    translateY,
     rotationAngle,
-    scale,
+    cardAnimatedStyle,
     runEntranceAnimation,
     animateSwipeOut,
     animateSpringBack,
   };
-};
-
-export default useCardAnimations;
+}

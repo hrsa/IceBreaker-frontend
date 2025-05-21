@@ -1,10 +1,12 @@
-import { useRef, useState } from "react";
-import { Animated, Dimensions, Platform } from "react-native";
-import { PanGestureHandlerGestureEvent, State } from "react-native-gesture-handler";
+import { useState } from "react";
+import { Dimensions, Platform } from "react-native";
+import { Gesture } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
+import { runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 
 // Constants
 const DRAG_THRESHOLD = 10;
+const LONG_PRESS_DURATION = 500;
 const { height } = Dimensions.get("window");
 
 interface UseDragGestureProps {
@@ -19,82 +21,114 @@ export const useDragGesture = ({ onDragStart, onDragEnd, onDelete, trashZoneHeig
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [showTrashZone, setShowTrashZone] = useState(false);
 
-  const panValue = useRef(new Animated.ValueXY()).current;
-  const trashZoneOpacity = useRef(new Animated.Value(0)).current;
-
-  const totalMovement = useRef(0);
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const trashZoneOpacity = useSharedValue(0);
+  const totalMovement = useSharedValue(0);
+  const isDraggable = useSharedValue(false);
 
   const toggleTrashZone = (show: boolean) => {
     setShowTrashZone(show);
-    Animated.timing(trashZoneOpacity, {
-      toValue: show ? 1 : 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
+    trashZoneOpacity.value = withTiming(show ? 1 : 0, { duration: 300 });
   };
 
-  const handlePanGestureEvent = Animated.event([{ nativeEvent: { translationX: panValue.x, translationY: panValue.y } }], {
-    useNativeDriver: false,
-    listener: (event: PanGestureHandlerGestureEvent) => {
-      const { translationX, translationY } = event.nativeEvent;
+  const handleDragStart = (index: number) => {
+    triggerHaptic("impact", { style: Haptics.ImpactFeedbackStyle.Medium });
+    setDraggingIndex(index);
+    toggleTrashZone(true);
+    if (onDragStart) onDragStart();
+  };
 
-      // Calculate total movement distance
-      const movement = Math.sqrt(translationX * translationX + translationY * translationY);
-      totalMovement.current = movement;
+  const createGesture = (index: number) => {
+    const longPressGesture = Gesture.LongPress()
+      .minDuration(LONG_PRESS_DURATION)
+      .onStart(() => {
+        "worklet";
+        isDraggable.value = true;
+        runOnJS(handleDragStart)(index);
+      });
 
-      // If moved more than threshold, consider it dragging
-      if (movement > DRAG_THRESHOLD && !isDragging) {
-        setIsDragging(true);
-      }
-    },
-  });
+    const panGesture = Gesture.Pan()
+      .manualActivation(true)
+      .onTouchesMove((_, state) => {
+        "worklet";
+        if (isDraggable.get()) {
+          state.activate();
+        } else {
+          state.fail();
+        }
+      })
+      .onChange(event => {
+        "worklet";
+        translateX.value = event.translationX;
+        translateY.value = event.translationY;
 
-  const handleStateChange = (event: PanGestureHandlerGestureEvent, index: number) => {
-    const { state, absoluteY } = event.nativeEvent;
+        totalMovement.value = Math.sqrt(event.translationX * event.translationX + event.translationY * event.translationY);
+        runOnJS(setIsDragging)(true);
+      })
+      .onEnd(event => {
+        "worklet";
+        const isInTrashZone = event.absoluteY > height - trashZoneHeight + 100;
+        if (isInTrashZone && draggingIndex !== null && onDelete) {
+          runOnJS(onDelete)(draggingIndex);
+          runOnJS(triggerHaptic)("impact", { style: Haptics.ImpactFeedbackStyle.Heavy });
+        } else {
+          translateX.value = withSpring(0);
+          translateY.value = withSpring(0);
+        }
 
-    if (state === State.BEGAN) {
-      setDraggingIndex(index);
-      toggleTrashZone(true);
-      if (onDragStart) onDragStart();
-      triggerHaptic("impact", { style: Haptics.ImpactFeedbackStyle.Light });
-    } else if (state === State.END) {
-      const isInTrashZone = showTrashZone && absoluteY > height - trashZoneHeight - 100;
+        runOnJS(resetGestureState)();
+      })
+      .onFinalize(() => {
+        "worklet";
+        runOnJS(resetGestureState)();
+      });
 
-      if (isInTrashZone && draggingIndex !== null) {
-        if (onDelete) onDelete(draggingIndex);
-        triggerHaptic("impact", { style: Haptics.ImpactFeedbackStyle.Heavy });
-      }
-
-      resetGestureState();
-    } else if (state === State.FAILED || state === State.CANCELLED) {
-      resetGestureState();
-    }
+    return Gesture.Race(Gesture.Simultaneous(longPressGesture, panGesture), Gesture.Tap());
   };
 
   const resetGestureState = () => {
+    isDraggable.value = false;
     setTimeout(() => {
       setIsDragging(false);
-      totalMovement.current = 0;
+      totalMovement.value = 0;
+      setDraggingIndex(null);
+      toggleTrashZone(false);
     }, 50);
 
-    setDraggingIndex(null);
-    toggleTrashZone(false);
-    panValue.setValue({ x: 0, y: 0 });
     if (onDragEnd) onDragEnd();
   };
 
   const canItemBeClicked = () => {
-    return !isDragging && totalMovement.current < DRAG_THRESHOLD;
+    return !isDragging && totalMovement.value < DRAG_THRESHOLD;
   };
+
+  const getGestureHandlerProps = (index: number) => {
+    return {
+      gesture: createGesture(index),
+    };
+  };
+
+  const trashZoneAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: trashZoneOpacity.value,
+      transform: [
+        {
+          translateY: (1 - trashZoneOpacity.value) * trashZoneHeight,
+        },
+      ],
+    };
+  });
 
   return {
     isDragging,
     draggingIndex,
     showTrashZone,
-    panValue,
+    translateX,
+    translateY,
     trashZoneOpacity,
-    handlePanGestureEvent,
-    handleStateChange,
+    trashZoneAnimatedStyle,
+    getGestureHandlerProps,
     canItemBeClicked,
   };
 };
