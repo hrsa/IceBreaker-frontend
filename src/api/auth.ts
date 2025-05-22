@@ -13,6 +13,12 @@ interface RegisterRequest {
   name: string;
 }
 
+export interface UpdateUserRequest {
+  name?: string;
+  email?: string;
+  password?: string;
+}
+
 interface AuthResponse {
   accessToken: string;
 }
@@ -27,6 +33,20 @@ export const login = async (data: LoginRequest): Promise<AuthResponse> => {
     console.error("Login error:", error);
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.message || "Login failed");
+    }
+    throw error;
+  }
+};
+
+export const updateMe = async (userId: string, data: UpdateUserRequest): Promise<User> => {
+  try {
+    const apiClient = await getApiClient();
+    const response = await apiClient.patch<User>(`/users/${userId}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("UpdateMe error:", error);
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "My profile update failed");
     }
     throw error;
   }

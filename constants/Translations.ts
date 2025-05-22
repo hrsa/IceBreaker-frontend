@@ -10,6 +10,7 @@ export const Translations = {
       start_game: "Start the game",
       error: "Error",
       success: "Success",
+      copy_success: "Copied to clipboard!",
     },
     profile: {
       title: "Profiles",
@@ -90,9 +91,22 @@ export const Translations = {
         password_too_short: "Password must be at least 6 characters long",
       },
     },
+    my_profile: {
+      title: "My profile",
+      update_button: "Update profile",
+      connect_tg: "Connect my Telegram account",
+      profile_updated: "Your profile has been updated.",
+      modal: {
+        title: "Connect Telegram",
+        did_you_know: "Did you know that you can use IceMelter in different ways? We have a website, an app and a Telegram bot.",
+        click_the_field: "Please click below to copy your secret phrase.",
+        bot_link: "And then - send it to IceMelter Bot",
+      },
+    },
     index: {
       logout: "Logout",
       start: "Start",
+      my_profile: "My profile",
     },
     language: {
       select: "Select language",
@@ -113,6 +127,7 @@ export const Translations = {
       start_game: "Начать игру",
       error: "Ошибка",
       success: "Получилось!",
+      copy_success: "Скопировано в буфер обмена!",
     },
     profile: {
       title: "Профили",
@@ -193,9 +208,22 @@ export const Translations = {
         password_too_short: "Пароль должен быть не короче 6 символов",
       },
     },
+    my_profile: {
+      title: "Мой профиль",
+      update_button: "Обновить профиль",
+      connect_tg: "Подключить Telegram",
+      profile_updated: "Твой профиль был обновлен.",
+      modal: {
+        title: "Подключить Telegram",
+        did_you_know: "Знаешь ли ты, что IceMelter можно использовать по-разному? У нас есть веб-сайт, приложение и бот Telegram.",
+        click_the_field: "Кликни, чтобы скопировать секретную фразу.",
+        bot_link: "А затем — отправь её боту IceMelter",
+      },
+    },
     index: {
       logout: "Выйти",
       start: "Начать игру",
+      my_profile: "Мой профиль",
     },
     language: {
       select: "Выбери язык",
@@ -214,6 +242,9 @@ export const Translations = {
       back: "Retour",
       no_cards: "Plus de cartes !",
       start_game: "Commence le jeu",
+      error: "Erreur",
+      success: "Succès",
+      copy_success: "Copié dans le presse-papiers !",
     },
     profile: {
       title: "Profils",
@@ -221,6 +252,18 @@ export const Translations = {
       no_profile: "Pas encore de profils. Crée ton premier profil !",
       create: "Nouveau profil",
       delete: "Glisse ici pour supprimer",
+      modal: {
+        title: "Créer un nouveau profil",
+        placeholder: "Nom de profil",
+        creating: "Création ...",
+        create: "Créer",
+        cancel: "Annuler",
+      },
+      errors: {
+        empty_name: "Le nom de profil ne peut pas être vide",
+        creation_failed: "Erreur de création de profil",
+        delete_failed: "Erreur de suppression de profil",
+      },
     },
     category: {
       title: "Catégories",
@@ -261,9 +304,23 @@ export const Translations = {
         message: "Le mot de passe a été changé.",
       },
     },
+    my_profile: {
+      title: "Mon profil",
+      update_button: "Mettre à jour le profil",
+      connect_tg: "Connecter mon compte Telegram",
+      profile_updated: "Ton profil a été mis à jour.",
+      modal: {
+        title: "Connecter Telegram",
+        did_you_know:
+          "Sais-tu qu'on peut utiliser IceMelter de différentes manières ? Il y a un site web, une application et un bot Telegram.",
+        click_the_field: "Click ci-dessous pour copier ta phrase secrète.",
+        bot_link: "Ensuite, envoye-la au bot IceMelter",
+      },
+    },
     index: {
       logout: "Déconnexion",
       start: "Commencer",
+      my_profile: "Mon profil",
     },
     language: {
       select: "Choisis la langue",
@@ -282,6 +339,9 @@ export const Translations = {
       back: "Indietro",
       no_cards: "Nessuna carta rimasta!",
       start_game: "Inizia il gioco",
+      error: "Errore",
+      success: "Riuscito",
+      copy_success: "Copiato negli appunti!",
     },
     profile: {
       title: "Profili",
@@ -289,6 +349,18 @@ export const Translations = {
       no_profile: "Nessun profilo ancora. Crea il tuo primo profilo!",
       create: "Nuovo profilo",
       delete: "Trascina qui per eliminare",
+      modal: {
+        title: "Crea nuovo profilo",
+        placeholder: "Nome del profilo",
+        creating: "Creazione ...",
+        create: "Creare",
+        cancel: "Annulare",
+      },
+      errors: {
+        empty_name: "Il nome del profilo non può essere vuoto",
+        creation_failed: "Impossibile creare il profilo",
+        delete_failed: "Impossibile eliminare il profilo",
+      },
     },
     category: {
       title: "Categorie",
@@ -329,9 +401,22 @@ export const Translations = {
         message: "La password è stata cambiata.",
       },
     },
+    my_profile: {
+      title: "Mio profilo",
+      update_button: "Aggiorna profilo",
+      connect_tg: "Collega Telegram",
+      profile_updated: "Il tuo profilio è stato aggiornato.",
+      modal: {
+        title: "Collega Telegram",
+        did_you_know: "Sapevi che puoi usare IceMelter in diversi modi? Abbiamo un sito web, un'app e un bot Telegram.",
+        click_the_field: "Clicca qui sotto per copiare la tua frase segreta.",
+        bot_link: "E poi - inviala al bot di IceMelter",
+      },
+    },
     index: {
       logout: "Logout",
       start: "Inizio",
+      my_profile: "Mio profilio",
     },
     language: {
       select: "Seleziona lingua",

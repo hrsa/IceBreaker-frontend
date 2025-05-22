@@ -31,11 +31,8 @@ export default function HomeScreen() {
       setRedirect(false);
       if (!currentUser) {
         try {
-          getMe().then(() => {
-            console.log(user);
-          });
+          getMe();
           setCurrentUser(user);
-          console.warn(user);
           if (!currentUser) {
             setRedirect(true);
           }
@@ -65,25 +62,46 @@ export default function HomeScreen() {
 
   if (!redirect && currentUser) {
     return (
-      <SafeAreaView style={[styles.container, { alignItems: "center", justifyContent: "center" }]}>
+      <SafeAreaView style={[styles.container, styles.centerContent]}>
         <StatusBar style="auto" />
         <View>
           <Text style={[styles.title, { margin: "auto" }]}>🧊Ice Melter🧊</Text>
           <Image source={logo} style={{ width: 350, height: 350, margin: "auto" }} />
           <LanguageSelector />
 
-          <Button
-            text={t("index:start")}
-            buttonStyle={[styles.button, { marginHorizontal: "auto", paddingHorizontal: 25, marginVertical: 25 }]}
-            onPress={() => router.push("/profiles")}
-            disabled={isLoading}
-          />
-          <Button
-            text={t("index:logout")}
-            buttonStyle={[styles.button, { backgroundColor: "#AA0000", paddingHorizontal: 25, margin: "auto" }]}
-            onPress={handleLogout}
-            disabled={isLoading}
-          />
+          <View
+            style={{
+              ...styles.centerContent,
+              marginVertical: 35,
+              flexDirection: "column",
+              width: "100%",
+              gap: 35,
+            }}
+          >
+            <Button
+              text={t("index:start")}
+              buttonStyle={[styles.button, { backgroundColor: "#47b2cd" }]}
+              icon={"play"}
+              onPress={() => router.push("/profiles")}
+              disabled={isLoading}
+            />
+
+            <Button
+              text={t("index:my_profile")}
+              buttonStyle={[styles.button]}
+              icon={"settings"}
+              onPress={() => router.push("/my_profile")}
+              disabled={isLoading}
+            />
+
+            <Button
+              text={t("index:logout")}
+              buttonStyle={[styles.button, { backgroundColor: "#AA0000" }]}
+              icon={"exit"}
+              onPress={handleLogout}
+              disabled={isLoading}
+            />
+          </View>
         </View>
       </SafeAreaView>
     );

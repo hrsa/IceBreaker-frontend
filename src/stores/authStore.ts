@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { User } from "@/src/types/entities";
-import { login, logout, register, me, resetPassword, requestPasswordReset } from "@/src/api/auth";
+import { login, logout, register, me, resetPassword, requestPasswordReset, updateMe, UpdateUserRequest } from "@/src/api/auth";
 import { getToken } from "@/src/api/apiClient";
 
 interface AuthState {
@@ -11,6 +11,7 @@ interface AuthState {
   test: string | null;
   login: (email: string, password: string) => Promise<void>;
   getMe: () => Promise<void>;
+  updateMe: (data: UpdateUserRequest) => Promise<void>;
   register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
@@ -67,6 +68,27 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         });
         console.error("My profile error:", error);
       }
+    }
+  },
+
+  updateMe: async (data: UpdateUserRequest) => {
+    try {
+      set({ isLoading: true, error: null });
+      const userId = get().user?.id;
+      if (!userId) return;
+
+      const updatedUser = await updateMe(userId, data);
+
+      set({
+        user: updatedUser,
+        isLoading: false,
+      });
+    } catch (error) {
+      set({
+        isLoading: false,
+        error: error instanceof Error ? error.message : "My profile failed",
+      });
+      console.error("My profile error:", error);
     }
   },
 

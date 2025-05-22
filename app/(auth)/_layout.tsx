@@ -66,6 +66,7 @@ export default function AuthLayout() {
         <Stack.Screen name="profiles" options={{ headerShown: false, animation: "slide_from_right" }} />
         <Stack.Screen name="categories" options={{ headerShown: false, animation: "slide_from_right" }} />
         <Stack.Screen name="game" options={{ headerShown: false, animation: "slide_from_right" }} />
+        <Stack.Screen name="my_profile" options={{ headerShown: false, animation: "slide_from_right" }} />
       </Stack>
     </AlertProvider>
   );
