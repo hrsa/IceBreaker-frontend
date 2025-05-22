@@ -6,7 +6,7 @@ export const useCardStyles = () => {
   const commonStyles = useCommonStyles();
   const { width: screenWidth } = Dimensions.get("window");
   const isNarrowScreen = screenWidth < 600;
-  const shouldRotateCard = config.isMobile && isNarrowScreen;
+  const shouldRotateCard = config.isMobile || isNarrowScreen;
   const cardColor = "rgb(181,127,87)";
   const cardDimensions = shouldRotateCard
     ? {
