@@ -56,7 +56,6 @@ export const useGameStore = create<GameState>((set, get) => ({
     const categoryIds = get().categories.map(category => category.id);
     const data: RandomCardRequest = { profileId, categoryIds, limit, includeArchived, includeLoved };
     const { cards, hasViewedAllCards } = await getRandomCards(data);
-    console.log(`Got ${cards.length} random cards`);
     get().addCards(cards);
     set({ hasViewedAllCards });
 
@@ -74,9 +73,6 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     if (uniqueNewCards.length > 0) {
       set({ cards: [...currentCards, ...uniqueNewCards] });
-      console.log(`Added ${uniqueNewCards.length} new unique cards to store`);
-    } else {
-      console.log("No new unique cards to add");
     }
   },
 

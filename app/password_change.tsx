@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvo
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { useLanguageStore } from "@/src/stores/languageStore";
 import { useAuthStore } from "@/src/stores/authStore";
 import { useAlert } from "@/hooks/useAlert";
@@ -22,8 +21,6 @@ export default function PasswordChangeScreen() {
   const { alert } = useAlert();
 
   const resetPassword = useAuthStore(state => state.resetPassword);
-
-  const placeholderColor = useThemeColor({}, "placeholder");
 
   useEffect(() => {
     if (params.token) {
@@ -99,7 +96,7 @@ export default function PasswordChangeScreen() {
               <TextInput
                 style={styles.input}
                 placeholder={t("password_change:new_password_placeholder")}
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor={styles.placeholder.color}
                 value={newPassword}
                 autoCapitalize="none"
                 onChangeText={setNewPassword}
@@ -113,7 +110,7 @@ export default function PasswordChangeScreen() {
               <TextInput
                 style={styles.input}
                 placeholder={t("password_change:confirm_password_placeholder")}
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor={styles.placeholder.color}
                 value={confirmPassword}
                 autoCapitalize="none"
                 onChangeText={setConfirmPassword}

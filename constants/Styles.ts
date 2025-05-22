@@ -109,7 +109,9 @@ export const createCommonStyles = (theme: ColorScheme) => {
       color: "white",
       fontFamily: "MerriweatherBold",
     },
-
+    placeholder: {
+      color: theme.placeholder,
+    },
     suggestionLink: {
       ...base.text,
       color: theme.primary,
@@ -124,6 +126,7 @@ export const createCommonStyles = (theme: ColorScheme) => {
       justifyContent: "center",
       alignItems: "center",
       backgroundColor: "rgba(0,0,0,0.9)",
+      cursor: "pointer",
     },
     modalContent: {
       width: "auto",
@@ -131,6 +134,7 @@ export const createCommonStyles = (theme: ColorScheme) => {
       borderRadius: 20,
       alignItems: "center",
       overflow: "hidden",
+      cursor: "auto",
     },
     modalTitle: {
       fontFamily: "MerriweatherBold",

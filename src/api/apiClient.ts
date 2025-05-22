@@ -5,7 +5,6 @@ import * as SecureStore from "expo-secure-store";
 
 export async function createApiClient(): Promise<AxiosInstance> {
   const initialToken = await getToken();
-  console.log("Initial token on client creation:", initialToken ? "Token present" : "No token");
 
   const apiClient: AxiosInstance = axios.create({
     baseURL: config.api.url,

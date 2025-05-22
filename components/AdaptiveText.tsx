@@ -17,7 +17,6 @@ const AdaptiveText: FC<AdaptiveTextProps> = ({ fontSize, text, styles, numerator
   const adjustFontSize = () => {
     const lineBreaks = text.split("\n").length - 1;
     const newSize = numerator / (text.length * denominator + 28 * lineBreaks);
-    console.log(text.length, newSize, lineBreaks);
     if (newSize < fontSize) {
       setCurrentFont(newSize);
     }

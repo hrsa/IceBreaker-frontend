@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvo
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { useAuthStore } from "@/src/stores/authStore";
 import { useLanguageStore } from "@/src/stores/languageStore";
 import { useAlert } from "@/hooks/useAlert";
@@ -19,8 +18,6 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const placeholderColor = useThemeColor({}, "placeholder");
 
   const register = useAuthStore(state => state.register);
   const isLoading = useAuthStore(state => state.isLoading);
@@ -76,7 +73,7 @@ export default function RegisterScreen() {
               <TextInput
                 style={styles.input}
                 placeholder={t("register:name_placeholder")}
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor={styles.placeholder.color}
                 value={name}
                 onChangeText={setName}
                 autoCapitalize="words"
@@ -89,7 +86,7 @@ export default function RegisterScreen() {
               <TextInput
                 style={styles.input}
                 placeholder={t("login:email_placeholder")}
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor={styles.placeholder.color}
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
@@ -103,7 +100,7 @@ export default function RegisterScreen() {
               <TextInput
                 style={styles.input}
                 placeholder={t("login:password_placeholder")}
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor={styles.placeholder.color}
                 value={password}
                 autoCapitalize="none"
                 onChangeText={setPassword}
@@ -117,7 +114,7 @@ export default function RegisterScreen() {
               <TextInput
                 style={styles.input}
                 placeholder={t("register:confirm_password_placeholder")}
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor={styles.placeholder.color}
                 value={confirmPassword}
                 autoCapitalize="none"
                 onChangeText={setConfirmPassword}

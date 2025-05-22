@@ -14,7 +14,7 @@ export const useRegisterStyles = () => {
     },
     header: {
       ...commonStyles.header,
-      marginBottom: 40
+      marginBottom: 40,
     },
     title: {
       ...commonStyles.title,
@@ -23,7 +23,7 @@ export const useRegisterStyles = () => {
     subtitle: {
       ...commonStyles.subtitle,
       fontSize: 16,
-      marginBottom: 8
+      marginBottom: 8,
     },
     label: {
       ...commonStyles.label,

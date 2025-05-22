@@ -4,7 +4,6 @@ import { Gesture } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
 import { runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 
-// Constants
 const DRAG_THRESHOLD = 10;
 const LONG_PRESS_DURATION = 500;
 const { height } = Dimensions.get("window");
@@ -72,11 +71,7 @@ export const useDragGesture = ({ onDragStart, onDragEnd, onDelete, trashZoneHeig
         if (isInTrashZone && draggingIndex !== null && onDelete) {
           runOnJS(onDelete)(draggingIndex);
           runOnJS(triggerHaptic)("impact", { style: Haptics.ImpactFeedbackStyle.Heavy });
-        } else {
-          translateX.value = withSpring(0);
-          translateY.value = withSpring(0);
         }
-
         runOnJS(resetGestureState)();
       })
       .onFinalize(() => {
@@ -89,6 +84,8 @@ export const useDragGesture = ({ onDragStart, onDragEnd, onDelete, trashZoneHeig
 
   const resetGestureState = () => {
     isDraggable.value = false;
+    translateX.value = withSpring(0);
+    translateY.value = withSpring(0);
     setTimeout(() => {
       setIsDragging(false);
       totalMovement.value = 0;

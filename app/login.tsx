@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvo
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { useAuthStore } from "@/src/stores/authStore";
 import { useLoginStyles } from "@/src/styles/Login";
 import { useLanguageStore } from "@/src/stores/languageStore";
@@ -19,8 +18,6 @@ export default function LoginScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const styles = useLoginStyles();
-
-  const placeholderColor = useThemeColor({}, "placeholder");
 
   const login = useAuthStore(state => state.login);
   const getMe = useAuthStore(state => state.getMe);
@@ -83,7 +80,7 @@ export default function LoginScreen() {
               <TextInput
                 style={styles.input}
                 placeholder={t("login:email_placeholder")}
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor={styles.placeholder.color}
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
@@ -97,7 +94,7 @@ export default function LoginScreen() {
               <TextInput
                 style={styles.input}
                 placeholder={t("login:password_placeholder")}
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor={styles.placeholder.color}
                 value={password}
                 autoCapitalize="none"
                 onChangeText={setPassword}

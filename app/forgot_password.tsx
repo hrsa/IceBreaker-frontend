@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvo
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { useAuthStore } from "@/src/stores/authStore";
 import { useLoginStyles } from "@/src/styles/Login";
 import { useLanguageStore } from "@/src/stores/languageStore";
@@ -17,8 +16,6 @@ export default function ForgotPasswordScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const styles = useLoginStyles();
-
-  const placeholderColor = useThemeColor({}, "placeholder");
 
   const getMe = useAuthStore(state => state.getMe);
   const isLoading = useAuthStore(state => state.isLoading);
@@ -74,7 +71,7 @@ export default function ForgotPasswordScreen() {
               <TextInput
                 style={[styles.input, { marginHorizontal: "auto", width: 250, marginBottom: 25 }]}
                 placeholder={t("login:email_placeholder")}
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor={styles.placeholder.color}
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
