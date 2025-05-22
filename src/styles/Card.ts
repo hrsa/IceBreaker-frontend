@@ -31,7 +31,7 @@ export const useCardStyles = () => {
     },
     card: {
       ...cardDimensions,
-      transform: [{ rotate: config.isMobile ? "90deg" : "0deg" }],
+      transform: [{ rotate: shouldRotateCard ? "90deg" : "0deg" }],
       position: "relative",
     },
     cardFlippedContent: {
