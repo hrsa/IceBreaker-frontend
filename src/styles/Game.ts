@@ -1,13 +1,16 @@
 import { useCommonStyles } from "@/constants/Styles";
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import config from "@/src/config/config";
 
 export const useGameStyles = () => {
   const commonStyles = useCommonStyles();
+  const { width: screenWidth } = Dimensions.get("window");
+  const isNarrowScreen = screenWidth < 600;
+  const shouldRotateCard = config.isMobile || isNarrowScreen;
   const gameButton = {
     borderRadius: 999,
     padding: 20,
-    transform: [{ rotate: config.isMobile ? "90deg" : "0deg" }],
+    transform: [{ rotate: shouldRotateCard ? "90deg" : "0deg" }],
   };
 
   return StyleSheet.create({
@@ -36,12 +39,12 @@ export const useGameStyles = () => {
       height: 80,
     },
     gameSwitchesContainer: {
-      flexDirection: config.isMobile ? "column" : "row",
+      flexDirection: shouldRotateCard ? "column" : "row",
       gap: 10,
       alignItems: "center",
       marginTop: 25,
       marginHorizontal: "auto",
-      transform: [{ rotate: config.isMobile ? "90deg" : "0deg" }],
+      transform: [{ rotate: shouldRotateCard ? "90deg" : "0deg" }],
       height: 80,
     },
     switchContainer: {
