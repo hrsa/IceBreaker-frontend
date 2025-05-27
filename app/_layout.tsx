@@ -58,6 +58,8 @@ export default function RootLayout() {
             <Stack.Screen name="register" options={{ headerShown: false, animation: "slide_from_right" }} />
             <Stack.Screen name="password_change" options={{ headerShown: false, animation: "slide_from_right" }} />
             <Stack.Screen name="forgot_password" options={{ headerShown: false, animation: "slide_from_right" }} />
+            <Stack.Screen name="tos" options={{ headerShown: false, animation: "slide_from_right" }} />
+            <Stack.Screen name="privacy_policy" options={{ headerShown: false, animation: "slide_from_right" }} />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
           </Stack>

@@ -19,6 +19,13 @@ export const useLoginStyles = () => {
       flexDirection: "row",
       justifyContent: "center",
     },
+    tosContainer: {
+      marginTop: 20,
+      flexDirection: "row",
+      justifyContent: "center",
+      flexWrap: "wrap",
+      maxWidth: 350,
+    },
     registerText: {
       ...commonStyles.text,
       fontSize: 14,

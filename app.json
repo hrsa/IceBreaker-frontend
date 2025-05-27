@@ -19,7 +19,7 @@
       "package": "com.hrsa.icemelter",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icemelter-icon.png",
-        "backgroundColor": "#f8e1c3"
+        "backgroundColor": "#F8E1C3"
       }
     },
     "web": {
@@ -35,7 +35,7 @@
           "image": "./assets/images/icemelter-icon-1024.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#f8e1c3"
+          "backgroundColor": "#F8E1C3"
         }
       ],
       "expo-secure-store",

@@ -63,6 +63,16 @@ export default function LoginScreen() {
     router.push("/forgot_password");
   };
 
+  const navigateToPrivacyPolicy = () => {
+    clearError();
+    router.push("/privacy_policy");
+  };
+
+  const navigateToTos = () => {
+    clearError();
+    router.push("/tos");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
@@ -122,6 +132,17 @@ export default function LoginScreen() {
               <Text style={styles.registerText}>{t("login:no_account")}</Text>
               <TouchableOpacity onPress={navigateToRegister}>
                 <Text style={styles.registerLink}>{t("login:register")}</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.tosContainer}>
+              <Text style={styles.registerText}>{t("login:legal:by_logging_in")}</Text>
+              <TouchableOpacity onPress={navigateToPrivacyPolicy}>
+                <Text style={styles.registerLink}>{t("login:legal:privacy_policy")}</Text>
+              </TouchableOpacity>
+              <Text style={styles.registerText}>{t("login:legal:and")}</Text>
+              <TouchableOpacity onPress={navigateToTos}>
+                <Text style={styles.registerLink}>{t("login:legal:tos")}</Text>
               </TouchableOpacity>
             </View>
           </View>

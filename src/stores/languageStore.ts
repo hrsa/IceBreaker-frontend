@@ -1,12 +1,14 @@
 import { create } from "zustand";
 import * as Localization from "expo-localization";
-import i18n, { InitOptions } from "i18next";
+import i18n, { InitOptions, TOptionsBase } from "i18next";
 import { initReactI18next } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Card, Category } from "@/src/types/entities";
 import { Translations } from "@/constants/Translations";
 
 export type SupportedLanguage = "en" | "ru" | "fr" | "it";
+type $Dictionary<T = unknown> = { [key: string]: T };
+type $SpecialObject = object | Array<string | object>;
 
 i18n.use(initReactI18next).init({
   resources: Translations,
@@ -23,7 +25,8 @@ interface LanguageState {
   error: string | null;
   setLanguage: (language: SupportedLanguage) => Promise<void>;
   switchLanguage: () => Promise<void>;
-  t: (key: string) => string;
+  t: (key: string, options?: (TOptionsBase & $Dictionary) | undefined) => string;
+  tObj: (key: string) => $SpecialObject;
   getLocalizedCardField: (entity: Card | Category, field: "question" | "description" | "name") => string;
   initializeLanguage: () => Promise<void>;
 }
@@ -98,8 +101,12 @@ export const useLanguageStore = create<LanguageState>()((set, get) => ({
     }
   },
 
-  t: (key: string) => {
-    return i18n.t(key);
+  t: (key: string, options?: (TOptionsBase & $Dictionary) | undefined) => {
+    return i18n.t(key, options);
+  },
+
+  tObj: (key: string) => {
+    return i18n.t(key, { returnObjects: true });
   },
 
   getLocalizedCardField: (entity: Card | Category, field: "question" | "description" | "name") => {

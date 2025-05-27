@@ -116,3 +116,16 @@ export const resetPassword = async (data: { token: string; password: string }): 
     }
   }
 };
+
+export const deleteAccount = async (userId: string): Promise<void> => {
+  try {
+    const apiClient = await getApiClient();
+    await apiClient.delete(`/users/${userId}`);
+    await deleteToken();
+  } catch (error) {
+    console.error("Delete account error:", error);
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Account deletion failed");
+    }
+  }
+};

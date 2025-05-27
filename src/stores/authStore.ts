@@ -1,6 +1,16 @@
 import { create } from "zustand";
 import { User } from "@/src/types/entities";
-import { login, logout, register, me, resetPassword, requestPasswordReset, updateMe, UpdateUserRequest } from "@/src/api/auth";
+import {
+  login,
+  logout,
+  register,
+  me,
+  resetPassword,
+  requestPasswordReset,
+  updateMe,
+  UpdateUserRequest,
+  deleteAccount,
+} from "@/src/api/auth";
 import { getToken } from "@/src/api/apiClient";
 
 interface AuthState {
@@ -8,7 +18,6 @@ interface AuthState {
   accessToken: string | null;
   isLoading: boolean;
   error: string | null;
-  test: string | null;
   login: (email: string, password: string) => Promise<void>;
   getMe: () => Promise<void>;
   updateMe: (data: UpdateUserRequest) => Promise<void>;
@@ -16,6 +25,7 @@ interface AuthState {
   logout: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
   resetPassword: (token: string, password: string) => Promise<void>;
+  deleteAccount: () => Promise<void>;
   clearError: () => void;
 }
 
@@ -24,7 +34,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   accessToken: null,
   isLoading: false,
   error: null,
-  test: null,
 
   login: async (email: string, password: string) => {
     try {
@@ -153,6 +162,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({
         isLoading: false,
         error: error instanceof Error ? error.message : "Password reset failed",
+      });
+    }
+  },
+
+  deleteAccount: async () => {
+    try {
+      set({ isLoading: true, error: null });
+      const user = get().user;
+      if (!user || !user.id) return;
+      await deleteAccount(user.id);
+      set({
+        user: null,
+        accessToken: null,
+        isLoading: false,
+      });
+    } catch (error) {
+      set({
+        isLoading: false,
+        error: error instanceof Error ? error.message : "Account deletion failed",
       });
     }
   },

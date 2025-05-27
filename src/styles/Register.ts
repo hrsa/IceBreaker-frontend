@@ -11,6 +11,7 @@ export const useRegisterStyles = () => {
       ...commonStyles.centerContent,
       width: "100%",
       maxWidth: 500,
+      marginHorizontal: "auto",
     },
     header: {
       ...commonStyles.header,

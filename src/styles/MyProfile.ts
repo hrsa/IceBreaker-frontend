@@ -42,8 +42,14 @@ export const useMyProfileStyles = () => {
     botLink: {
       ...commonStyles.text,
       color: commonStyles.button.backgroundColor,
-      fontSize: 16,
       fontFamily: "MerriweatherBold",
+    },
+    deleteAccountLink: {
+      ...commonStyles.text,
+      color: "darkred",
+      textAlign: "center",
+      marginTop: 20,
+      fontSize: 14,
     },
   });
 };

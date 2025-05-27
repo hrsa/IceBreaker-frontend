@@ -9,14 +9,20 @@ import { CopyableField } from "@/components/CopyableField";
 import { UpdateUserRequest } from "@/src/api/auth";
 import { useAlert } from "@/hooks/useAlert";
 import { useMyProfileStyles } from "@/src/styles/MyProfile";
+import { useRouter } from "expo-router";
 
 export default function MyProfileScreen() {
   const { alert } = useAlert();
+  const router = useRouter();
   const language = useLanguageStore(state => state.language);
   const t = useLanguageStore(state => state.t);
   const user = useAuthStore(state => state.user);
+  const deleteAccount = useAuthStore(state => state.deleteAccount);
   const styles = useMyProfileStyles();
-  const [modalVisible, setModalVisible] = useState(false);
+  const [telegramModalVisible, setTelegramModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [deleteEmail, setDeleteEmail] = useState("");
+  const [modalError, setModalError] = useState<string | null>(null);
   const updateMe = useAuthStore(state => state.updateMe);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -55,6 +61,20 @@ export default function MyProfileScreen() {
     setName(user!.name);
     setEmail(user!.email);
     setPassword("");
+  };
+
+  const handleDeleteEmailInput = (text: string) => {
+    setDeleteEmail(text);
+    setModalError(null);
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteEmail !== user!.email) {
+      setModalError(t("my_profile:errors:wrong_email"));
+      return;
+    }
+    await deleteAccount();
+    router.replace("/login");
   };
 
   return (
@@ -109,13 +129,13 @@ export default function MyProfileScreen() {
 
             {user && user.secretPhrase && (
               <View style={{ marginTop: 5, marginBottom: 25 }}>
-                <Text style={styles.suggestionLink} onPress={() => setModalVisible(true)}>
+                <Text style={styles.suggestionLink} onPress={() => setTelegramModalVisible(true)}>
                   {t("my_profile:connect_tg")}
                 </Text>
                 <Modal
-                  isVisible={modalVisible}
+                  isVisible={telegramModalVisible}
                   onDismiss={() => {
-                    setModalVisible(false);
+                    setTelegramModalVisible(false);
                   }}
                   title={t("my_profile:modal:title")}
                   closeOnBackdropPress={true}
@@ -129,11 +149,48 @@ export default function MyProfileScreen() {
                     </Text>
                   </View>
                 </Modal>
+
+                <Modal
+                  isVisible={deleteModalVisible}
+                  onDismiss={() => {
+                    setDeleteModalVisible(false);
+                  }}
+                  title={t("my_profile:delete_modal:title")}
+                  closeOnBackdropPress={true}
+                  buttons={
+                    <Button
+                      buttonStyle={{ backgroundColor: modalError ? "grey" : "darkred" }}
+                      text={t("my_profile:delete_modal:confirm")}
+                      onPress={handleDeleteAccount}
+                    />
+                  }
+                >
+                  <View style={styles.modalContent}>
+                    <Text style={styles.modalText}>{t("my_profile:delete_modal:message")}</Text>
+                    <Text style={styles.modalText}>{t("my_profile:delete_modal:hint")}</Text>
+                    <View style={styles.inputContainer}>
+                      <TextInput
+                        style={styles.input}
+                        onChangeText={handleDeleteEmailInput}
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                        autoComplete="email"
+                      />
+                      {modalError && <Text style={[styles.modalText, styles.errorText]}>{modalError}</Text>}
+                    </View>
+                  </View>
+                </Modal>
               </View>
             )}
 
             <View style={styles.buttonContainer}>
               <Button text={t("my_profile:update_button")} onPress={handleUpdateData} />
+            </View>
+
+            <View style={styles.buttonContainer}>
+              <Text style={styles.deleteAccountLink} onPress={() => setDeleteModalVisible(true)}>
+                {t("my_profile:delete_modal:title")}
+              </Text>
             </View>
           </View>
         </ScrollView>
