@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, Switch, Image, TouchableOpacity } from "react-native";
+import { Text, View, Switch, Image, TouchableOpacity, Dimensions } from "react-native";
 import { Card, PreferenceAction } from "@/src/types/entities";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGameStore } from "@/src/stores/gameStore";
@@ -28,6 +28,9 @@ export default function GameScreen() {
   const hasViewedAllCards = useGameStore(state => state.hasViewedAllCards);
   const categories = useGameStore(state => state.categories);
   const profile = useGameStore(state => state.profile);
+  const { width: screenWidth } = Dimensions.get("window");
+  const isNarrowScreen = screenWidth < 600;
+  const shouldRotateCard = config.isMobile || isNarrowScreen;
   const { getRandomCards, getFirstCard, updateCardPreference, resetGame } = gameStore;
   const [currentCard, setCurrentCard] = useState<Card | null>(null);
   const [lastCard, setLastCard] = useState<Card | null>(null);
@@ -185,7 +188,7 @@ export default function GameScreen() {
           <View
             style={{
               ...styles.switchContainer,
-              marginLeft: config.isMobile ? 0 : 40,
+              marginLeft: shouldRotateCard ? 0 : 40,
             }}
           >
             <Switch

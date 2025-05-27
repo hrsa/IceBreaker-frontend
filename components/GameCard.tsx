@@ -1,4 +1,4 @@
-import { Platform, TouchableOpacity, Image, View } from "react-native";
+import { Platform, TouchableOpacity, Image, View, Dimensions } from "react-native";
 import { FC, useEffect, useState } from "react";
 import { Card, PreferenceAction } from "@/src/types/entities";
 import * as Haptics from "expo-haptics";
@@ -19,7 +19,10 @@ interface GameCardProps {
   onDragged?: (dragged: boolean) => void;
 }
 
-const SWIPE_THRESHOLD = config.isMobile ? 200 : 400;
+const { width: screenWidth } = Dimensions.get("window");
+const isNarrowScreen = screenWidth < 600;
+const shouldRotateCard = config.isMobile || isNarrowScreen;
+const SWIPE_THRESHOLD = shouldRotateCard ? 200 : 400;
 const ROTATION_MAGNITUDE = 0.2;
 const DRAG_THRESHOLD = 10;
 
@@ -141,7 +144,13 @@ const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDrag
                   )}
                 </View>
                 <View style={styles.cardTextContainer}>
-                  <AdaptiveText text={getLocalizedQuestion} fontSize={28} styles={styles.cardText}></AdaptiveText>
+                  <AdaptiveText
+                    text={getLocalizedQuestion}
+                    fontSize={28}
+                    numerator={3600}
+                    denominator={0.75}
+                    styles={styles.cardText}
+                  ></AdaptiveText>
                 </View>
               </>
             ) : (
