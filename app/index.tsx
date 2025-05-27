@@ -65,22 +65,14 @@ export default function HomeScreen() {
       <SafeAreaView style={[styles.container, styles.centerContent]}>
         <StatusBar style="auto" />
         <View>
-          <Text style={[styles.title, { margin: "auto" }]}>🧊Ice Melter🧊</Text>
-          <Image source={logo} style={{ width: 350, height: 350, margin: "auto" }} />
+          <Text style={styles.title}>🧊Ice Melter🧊</Text>
+          <Image source={logo} style={styles.logo} />
           <LanguageSelector />
 
-          <View
-            style={{
-              ...styles.centerContent,
-              marginVertical: 35,
-              flexDirection: "column",
-              width: "100%",
-              gap: 35,
-            }}
-          >
+          <View style={styles.buttonContainer}>
             <Button
               text={t("index:start")}
-              buttonStyle={[styles.button, { backgroundColor: "#47b2cd" }]}
+              buttonStyle={styles.startButton}
               icon={"play"}
               onPress={() => router.push("/profiles")}
               disabled={isLoading}
@@ -94,13 +86,7 @@ export default function HomeScreen() {
               disabled={isLoading}
             />
 
-            <Button
-              text={t("index:logout")}
-              buttonStyle={[styles.button, { backgroundColor: "#AA0000" }]}
-              icon={"exit"}
-              onPress={handleLogout}
-              disabled={isLoading}
-            />
+            <Button text={t("index:logout")} buttonStyle={styles.logoutButton} icon={"exit"} onPress={handleLogout} disabled={isLoading} />
           </View>
         </View>
       </SafeAreaView>

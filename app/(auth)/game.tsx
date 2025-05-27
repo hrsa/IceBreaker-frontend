@@ -22,7 +22,6 @@ export default function GameScreen() {
   const t = useLanguageStore(state => state.t);
   const switchLanguage = useLanguageStore(state => state.switchLanguage);
   const styles = useGameStyles();
-  const step = useStepStore(state => state.step);
   const setStep = useStepStore(state => state.setStep);
   const gameStore = useGameStore();
   const cards = useGameStore(state => state.cards);
@@ -63,7 +62,6 @@ export default function GameScreen() {
   }, [profile, categories]);
 
   useFocusEffect(() => {
-    console.warn(step);
     setStep("game");
   });
 

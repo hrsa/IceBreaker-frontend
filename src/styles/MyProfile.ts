@@ -41,6 +41,7 @@ export const useMyProfileStyles = () => {
     },
     botLink: {
       ...commonStyles.text,
+      textAlign: "center",
       color: commonStyles.button.backgroundColor,
       fontFamily: "MerriweatherBold",
     },

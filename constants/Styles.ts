@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native";
 import { Colors, ColorScheme } from "./Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import config from "@/src/config/config";
 
 export const createCommonStyles = (theme: ColorScheme) => {
   const base = {
@@ -12,6 +13,9 @@ export const createCommonStyles = (theme: ColorScheme) => {
   };
 
   return StyleSheet.create({
+    background: {
+      backgroundColor: theme.background,
+    },
     flexFullWidth: {
       flex: 1,
       width: "100%",
@@ -35,7 +39,8 @@ export const createCommonStyles = (theme: ColorScheme) => {
     },
     content: {
       flex: 1,
-      marginHorizontal: "auto",
+      marginHorizontal: config.isMobile ? 0 : "auto",
+      alignItems: config.isMobile ? undefined : "center",
       justifyContent: "center",
       padding: 20,
     },
@@ -85,7 +90,8 @@ export const createCommonStyles = (theme: ColorScheme) => {
       padding: 15,
       borderWidth: 1,
       borderColor: theme.border,
-      marginHorizontal: "auto",
+      marginHorizontal: config.isMobile ? 0 : "auto",
+      alignItems: config.isMobile ? undefined : "center",
       width: "auto",
       minWidth: 250,
     },

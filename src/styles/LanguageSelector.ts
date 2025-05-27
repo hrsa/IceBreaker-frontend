@@ -17,7 +17,7 @@ export const useLanguageSelectorStyles = () => {
     },
     languageList: {
       flexDirection: "row",
-      flexWrap: "wrap",
+      flexWrap: config.isMobile ? undefined : "wrap",
       justifyContent: "center",
       gap: 10,
     },
