@@ -64,7 +64,7 @@ export default function HomeScreen() {
     return (
       <SafeAreaView style={[styles.container, styles.centerContent]}>
         <StatusBar style="auto" />
-        <View>
+        <View style={{ maxHeight: 850 }}>
           <Text style={styles.title}>🧊Ice Melter🧊</Text>
           <Image source={logo} style={styles.logo} />
           <LanguageSelector />

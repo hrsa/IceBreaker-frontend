@@ -23,6 +23,7 @@ export const useLoginStyles = () => {
       marginTop: 20,
       flexDirection: "row",
       justifyContent: "center",
+      alignSelf: "center",
       flexWrap: "wrap",
       maxWidth: 350,
     },

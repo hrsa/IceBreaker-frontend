@@ -90,7 +90,7 @@ export const createCommonStyles = (theme: ColorScheme) => {
       padding: 15,
       borderWidth: 1,
       borderColor: theme.border,
-      marginHorizontal: config.isMobile ? 0 : "auto",
+      marginHorizontal: "auto",
       alignItems: config.isMobile ? undefined : "center",
       width: "auto",
       minWidth: 250,
@@ -124,6 +124,10 @@ export const createCommonStyles = (theme: ColorScheme) => {
       fontSize: 14,
       fontFamily: "MerriweatherBold",
     },
+    modalText: {
+      ...base.text,
+      color: "white",
+    },
 
     // Modal styles
 
@@ -141,6 +145,9 @@ export const createCommonStyles = (theme: ColorScheme) => {
       alignItems: "center",
       overflow: "hidden",
       cursor: "auto",
+      borderWidth: 1,
+      borderColor: theme.border,
+      backgroundColor: theme.modalBackground,
     },
     modalTitle: {
       fontFamily: "MerriweatherBold",

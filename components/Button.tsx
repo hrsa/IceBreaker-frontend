@@ -26,7 +26,7 @@ const Button: FC<ButtonProps> = ({ text, onPress, buttonStyle, buttonTextStyle, 
         <Ionicons
           disabled={disabled ?? false}
           name={icon}
-          color={iconColor ?? defaultStyles.text.color}
+          color={iconColor ?? "white"}
           size={iconSize ?? 24}
           style={[{ marginRight: text.length > 0 ? 12 : 0 }, iconStyles]}
         />

@@ -222,8 +222,8 @@ export default function GameScreen() {
         <View style={{ alignItems: "center", marginBottom: 20 }}>
           <Ionicons name="alert-circle-outline" size={50} color="#F06292" />
         </View>
-        <Text style={[styles.text, { textAlign: "center", marginBottom: 10 }]}>{t("game:no_more_cards")}</Text>
-        <Text style={[styles.text, { textAlign: "center" }]}>{t("game:change_filters")}</Text>
+        <Text style={[styles.modalText, { textAlign: "center", marginBottom: 10 }]}>{t("game:no_more_cards")}</Text>
+        <Text style={[styles.modalText, { textAlign: "center" }]}>{t("game:change_filters")}</Text>
       </Modal>
     </SafeAreaView>
   );

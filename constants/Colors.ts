@@ -1,6 +1,7 @@
 export interface ColorScheme {
   text: string;
   background: string;
+  modalBackground: string;
   tint: string;
   icon: string;
   border: string;
@@ -26,6 +27,7 @@ export const Colors: Colors = {
   light: {
     text: "#11181C",
     background: "#fff",
+    modalBackground: "rgba(0,0, 0, 0,7)",
     tint: tintColorLight,
     icon: "#687076",
     tabIconDefault: "#687076",
@@ -41,6 +43,7 @@ export const Colors: Colors = {
   dark: {
     text: "#ECEDEE",
     background: "#151718",
+    modalBackground: "rgba(0,0, 0, 0,7)",
     tint: tintColorDark,
     icon: "#9BA1A6",
     tabIconDefault: "#9BA1A6",

@@ -19,6 +19,7 @@ export const useLanguageSelectorStyles = () => {
       flexDirection: "row",
       flexWrap: config.isMobile ? undefined : "wrap",
       justifyContent: "center",
+      minWidth: 300,
       gap: 10,
     },
     languageButton: {

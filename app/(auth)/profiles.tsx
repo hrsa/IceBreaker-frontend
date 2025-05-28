@@ -137,7 +137,7 @@ export default function ProfilesScreen() {
             data={localProfiles}
             renderItem={renderProfileBlob}
             keyExtractor={item => item.id}
-            numColumns={isLargeScreen ? 3 : 1}
+            numColumns={isLargeScreen ? 2 : 1}
             contentContainerStyle={styles.profilesContainer}
             style={styles.flexFullWidth}
             scrollEnabled={true}
@@ -166,7 +166,6 @@ export default function ProfilesScreen() {
         </BlurView>
       </Animated.View>
 
-      {/* Modal for creating a new profile */}
       <Modal
         isVisible={modalVisible}
         onDismiss={() => {

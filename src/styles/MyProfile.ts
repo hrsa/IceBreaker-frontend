@@ -36,7 +36,7 @@ export const useMyProfileStyles = () => {
       paddingHorizontal: 25,
     },
     modalText: {
-      ...commonStyles.text,
+      ...commonStyles.modalText,
       textAlign: "center",
     },
     botLink: {

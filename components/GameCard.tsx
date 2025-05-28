@@ -146,7 +146,7 @@ const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDrag
                 <View style={styles.cardTextContainer}>
                   <AdaptiveText
                     text={getLocalizedQuestion}
-                    fontSize={28}
+                    fontSize={26}
                     numerator={3600}
                     denominator={0.75}
                     styles={styles.cardText}

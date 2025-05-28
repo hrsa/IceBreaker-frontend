@@ -75,8 +75,9 @@ export default function CategoriesScreen() {
           horizontal={false}
           renderItem={renderItem}
           keyExtractor={item => item.id}
-          numColumns={isLargeScreen ? 3 : 1}
-          contentContainerStyle={isLargeScreen ? { alignItems: "center" } : {}}
+          style={isLargeScreen ? { width: 650 } : { width: 320 }}
+          numColumns={isLargeScreen ? 2 : 1}
+          contentContainerStyle={{}}
         />
       )}
       {selectedCategories && selectedCategories.length > 0 && (

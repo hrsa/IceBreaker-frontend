@@ -24,7 +24,7 @@ export function CopyableField({ textContent, style }: CopyableFieldProps) {
 
   return (
     <View style={[styles.inputContainer, style]}>
-      <TouchableOpacity style={styles.background} onPress={copyTextContent}>
+      <TouchableOpacity style={[styles.background, { borderRadius: 12, cursor: "pointer" }]} onPress={copyTextContent}>
         <View style={[styles.input, styles.centerContent]}>
           <Text
             style={{
