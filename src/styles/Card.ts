@@ -40,8 +40,8 @@ export const useCardStyles = () => {
       alignItems: "center",
     },
     cardStatusBadge: {
-      top: cardDimensions.height * 0.2,
-      left: cardDimensions.width,
+      top: shouldRotateCard ? cardDimensions.height * 0.2 : 15,
+      left: shouldRotateCard ? cardDimensions.width : cardDimensions.width - 75,
       opacity: 0.5,
       position: "absolute",
     },
