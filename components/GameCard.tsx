@@ -117,15 +117,11 @@ const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDrag
         animateSpringBack();
       }
 
-      runOnJS(setTimeout)(() => {
-        runOnJS(setIsDragging)(false);
-      }, 50);
+      runOnJS(setIsDragging)(false);
     })
     .onFinalize(() => {
       "worklet";
-      runOnJS(setTimeout)(() => {
-        runOnJS(setIsDragging)(false);
-      }, 50);
+      runOnJS(setIsDragging)(false);
     });
 
   return (
