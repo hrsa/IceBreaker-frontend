@@ -129,46 +129,44 @@ export default function GameScreen() {
               onFlipped={handleCardFlipped}
               onDragged={handleCardDragged}
             />
-            <Animated.View
-              style={[
-                {
-                  ...styles.gameButtonsContainer,
-                  pointerEvents: buttonsPointerEvents,
-                },
-                buttonsAnimatedStyle,
-              ]}
-            >
+            <Animated.View style={styles.gameButtonsContainer}>
               {lastCard && lastCard.id !== currentCard.id && (
-                <Button
-                  text=""
-                  buttonStyle={styles.undoButton}
-                  iconSize={45}
-                  icon={"arrow-undo"}
-                  onPress={() => setCurrentCard(lastCard)}
-                />
-              )}
-              {currentCard?.cardPreference?.status !== "loved" ? (
-                <Button
-                  text=""
-                  buttonStyle={styles.loveButton}
-                  iconSize={45}
-                  icon={"heart"}
-                  onPress={() => handleCardPreference(currentCard, "love")}
-                />
-              ) : (
-                <Button
-                  text=""
-                  buttonStyle={styles.loveButton}
-                  iconSize={45}
-                  icon={"heart-dislike"}
-                  onPress={() => handleCardPreference(currentCard, "reactivate")}
-                />
+                <Animated.View style={[buttonsAnimatedStyle, { pointerEvents: buttonsPointerEvents }]}>
+                  <Button
+                    text=""
+                    buttonStyle={styles.undoButton}
+                    iconSize={45}
+                    icon={"arrow-undo"}
+                    onPress={() => setCurrentCard(lastCard)}
+                  />
+                </Animated.View>
               )}
               <View style={{}}>
                 <TouchableOpacity onPress={switchLanguage}>
                   <Image source={getLanguageImage(language)} style={styles.languageButton}></Image>
                 </TouchableOpacity>
               </View>
+              {currentCard?.cardPreference?.status !== "loved" ? (
+                <Animated.View style={[buttonsAnimatedStyle, { pointerEvents: buttonsPointerEvents }]}>
+                  <Button
+                    text=""
+                    buttonStyle={styles.loveButton}
+                    iconSize={45}
+                    icon={"heart"}
+                    onPress={() => handleCardPreference(currentCard, "love")}
+                  />
+                </Animated.View>
+              ) : (
+                <Animated.View style={[buttonsAnimatedStyle, { pointerEvents: buttonsPointerEvents }]}>
+                  <Button
+                    text=""
+                    buttonStyle={styles.loveButton}
+                    iconSize={45}
+                    icon={"heart-dislike"}
+                    onPress={() => handleCardPreference(currentCard, "reactivate")}
+                  />
+                </Animated.View>
+              )}
             </Animated.View>
           </>
         ) : (
