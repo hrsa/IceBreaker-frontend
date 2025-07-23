@@ -115,6 +115,12 @@ export default function GameScreen() {
     setCurrentCard(getFirstCard());
   };
 
+  const handlePreviousCard = () => {
+    if (currentCard && lastCard && lastCard.id !== currentCard.id) {
+      setCurrentCard(lastCard);
+    }
+  };
+
   return (
     <SafeAreaView style={[styles.container, styles.centerContent]}>
       <View style={[styles.container, styles.centerContent]}>
@@ -130,17 +136,9 @@ export default function GameScreen() {
               onDragged={handleCardDragged}
             />
             <Animated.View style={styles.gameButtonsContainer}>
-              {lastCard && lastCard.id !== currentCard.id && (
-                <Animated.View style={[buttonsAnimatedStyle, { pointerEvents: buttonsPointerEvents }]}>
-                  <Button
-                    text=""
-                    buttonStyle={styles.undoButton}
-                    iconSize={45}
-                    icon={"arrow-undo"}
-                    onPress={() => setCurrentCard(lastCard)}
-                  />
-                </Animated.View>
-              )}
+              <Animated.View style={[buttonsAnimatedStyle, { pointerEvents: buttonsPointerEvents }]}>
+                <Button text="" buttonStyle={styles.undoButton} iconSize={45} icon={"arrow-undo"} onPress={handlePreviousCard} />
+              </Animated.View>
               <View style={{}}>
                 <TouchableOpacity onPress={switchLanguage}>
                   <Image source={getLanguageImage(language)} style={styles.languageButton}></Image>
