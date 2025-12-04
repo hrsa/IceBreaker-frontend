@@ -2,7 +2,7 @@ import { useCommonStyles } from "@/constants/Styles";
 import { StyleSheet } from "react-native";
 import config from "@/src/config/config";
 
-export const useLanguageSelectorStyles = () => {
+export const useLanguageSelectorStyles = (rotateOnMobile: boolean = false) => {
   const commonStyles = useCommonStyles();
 
   return StyleSheet.create({
@@ -37,7 +37,7 @@ export const useLanguageSelectorStyles = () => {
     languageImage: {
       width: 60,
       height: 60,
-      transform: [{ rotate: config.isMobile ? "90deg" : "0deg" }],
+      transform: [{ rotate: config.isMobile && rotateOnMobile ? "90deg" : "0deg" }],
     },
   });
 };

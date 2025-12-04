@@ -16,6 +16,7 @@ import { useLanguageImages } from "@/hooks/useLanguageImages";
 import { useStepStore } from "@/src/stores/stepStore";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useGameStyles } from "@/src/styles/Game";
+import { useKeepAwake } from "expo-keep-awake";
 
 export default function GameScreen() {
   const language = useLanguageStore(state => state.language);
@@ -49,6 +50,8 @@ export default function GameScreen() {
   });
 
   const buttonsPointerEvents = isDragging || !cardFlipped ? "none" : "auto";
+
+  useKeepAwake();
 
   useEffect(() => {
     setStep("game");

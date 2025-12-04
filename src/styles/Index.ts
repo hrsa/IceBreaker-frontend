@@ -16,8 +16,8 @@ export const useIndexStyles = () => {
       marginBottom: 10,
     },
     logo: {
-      width: 350,
-      height: 350,
+      width: 250,
+      height: 250,
       marginHorizontal: "auto",
     },
     userInfo: {

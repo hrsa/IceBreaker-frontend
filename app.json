@@ -2,7 +2,7 @@
   "expo": {
     "name": "IceMelter",
     "slug": "ice-melter",
-    "version": "1.0.2",
+    "version": "1.0.11",
     "orientation": "portrait",
     "icon": "./assets/images/icemelter-icon-1024.png",
     "scheme": "myapp",
@@ -40,7 +40,8 @@
       ],
       "expo-secure-store",
       "expo-localization",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
