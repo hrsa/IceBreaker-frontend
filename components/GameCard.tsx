@@ -50,27 +50,22 @@ const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDrag
     }
   };
 
+  // The parent remounts this component per card via `key={card.id}`, so a
+  // mount-only entrance animation is enough; there is nothing to reset.
   useEffect(() => {
     runEntranceAnimation();
-    setFlipped(false);
-  }, [card.id]);
+  }, []);
 
-  useEffect(() => {
-    if (onFlipped) {
-      onFlipped(flipped);
-    }
-  }, [flipped, onFlipped]);
-
-  useEffect(() => {
-    if (onDragged) {
-      onDragged(isDragging);
-    }
-  }, [isDragging, onDragged]);
+  const updateDragging = (dragging: boolean) => {
+    setIsDragging(dragging);
+    onDragged?.(dragging);
+  };
 
   const handleCardPress = () => {
-    if (!isDragging) {
-      setFlipped(!flipped);
-    }
+    if (isDragging) return;
+    const nextFlipped = !flipped;
+    setFlipped(nextFlipped);
+    onFlipped?.(nextFlipped);
   };
 
   const triggerHaptic = () => {
@@ -86,15 +81,19 @@ const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDrag
     })
     .onChange(event => {
       "worklet";
+      // SharedValue assignment is the documented Reanimated worklet API.
+      // eslint-disable-next-line react-hooks/immutability
       translateX.value = event.translationX;
+      // eslint-disable-next-line react-hooks/immutability
       translateY.value = event.translationY;
 
+      // eslint-disable-next-line react-hooks/immutability
       rotationAngle.value = (event.translationY / 200) * ROTATION_MAGNITUDE;
 
       const movement = Math.sqrt(event.translationX * event.translationX + event.translationY * event.translationY);
 
       if (movement > DRAG_THRESHOLD) {
-        runOnJS(setIsDragging)(true);
+        runOnJS(updateDragging)(true);
       }
     })
     .onEnd(event => {
@@ -117,11 +116,11 @@ const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDrag
         animateSpringBack();
       }
 
-      runOnJS(setIsDragging)(false);
+      runOnJS(updateDragging)(false);
     })
     .onFinalize(() => {
       "worklet";
-      runOnJS(setIsDragging)(false);
+      runOnJS(updateDragging)(false);
     });
 
   return (

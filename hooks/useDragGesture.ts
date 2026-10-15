@@ -26,6 +26,9 @@ export const useDragGesture = ({ onDragStart, onDragEnd, onDelete, trashZoneHeig
   const trashZoneOpacity = useSharedValue(0);
   const totalMovement = useSharedValue(0);
   const isDraggable = useSharedValue(false);
+  // Shared-value mirror of draggingIndex: worklets capture values at gesture
+  // creation, so reading the React state in `.onEnd` would be stale.
+  const draggingIndexShared = useSharedValue<number | null>(null);
 
   const toggleTrashZone = (show: boolean) => {
     setShowTrashZone(show);
@@ -34,6 +37,7 @@ export const useDragGesture = ({ onDragStart, onDragEnd, onDelete, trashZoneHeig
 
   const handleDragStart = (index: number) => {
     triggerHaptic("impact", { style: Haptics.ImpactFeedbackStyle.Medium });
+    draggingIndexShared.value = index;
     setDraggingIndex(index);
     toggleTrashZone(true);
     if (onDragStart) onDragStart();
@@ -69,8 +73,9 @@ export const useDragGesture = ({ onDragStart, onDragEnd, onDelete, trashZoneHeig
       .onEnd(event => {
         "worklet";
         const isInTrashZone = event.absoluteY > height - trashZoneHeight + 100;
-        if (isInTrashZone && draggingIndex !== null && onDelete) {
-          runOnJS(onDelete)(draggingIndex);
+        const index = draggingIndexShared.value;
+        if (isInTrashZone && index !== null && onDelete) {
+          runOnJS(onDelete)(index);
           runOnJS(triggerHaptic)("impact", { style: Haptics.ImpactFeedbackStyle.Heavy });
         }
         runOnJS(resetGestureState)();
@@ -90,6 +95,7 @@ export const useDragGesture = ({ onDragStart, onDragEnd, onDelete, trashZoneHeig
     setTimeout(() => {
       setIsDragging(false);
       totalMovement.value = 0;
+      draggingIndexShared.value = null;
       setDraggingIndex(null);
       toggleTrashZone(false);
     }, 50);

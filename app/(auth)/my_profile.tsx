@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Text, View, Platform, ScrollView, TextInput, KeyboardAvoidingView, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "@/components/Button";
@@ -24,16 +24,11 @@ export default function MyProfileScreen() {
   const [deleteEmail, setDeleteEmail] = useState("");
   const [modalError, setModalError] = useState<string | null>(null);
   const updateMe = useAuthStore(state => state.updateMe);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  // The (auth) layout gates this screen on a loaded user, so the form can be
+  // seeded lazily from the store instead of via an effect.
+  const [name, setName] = useState(() => user?.name ?? "");
+  const [email, setEmail] = useState(() => user?.email ?? "");
   const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    if (user) {
-      setName(user.name);
-      setEmail(user.email);
-    }
-  }, []);
 
   const handleUpdateData = async () => {
     let data: UpdateUserRequest = {};

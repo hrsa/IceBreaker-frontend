@@ -1,5 +1,5 @@
 import { StyleProp, Text, TextStyle } from "react-native";
-import { FC, useEffect, useState } from "react";
+import { FC, useMemo } from "react";
 import { useLanguageStore } from "@/src/stores/languageStore";
 
 interface AdaptiveTextProps {
@@ -11,20 +11,15 @@ interface AdaptiveTextProps {
 }
 
 const AdaptiveText: FC<AdaptiveTextProps> = ({ fontSize, text, styles, numerator = 4300, denominator = 0.7 }) => {
-  const [currentFont, setCurrentFont] = useState(fontSize);
   const language = useLanguageStore(state => state.language);
 
-  const adjustFontSize = () => {
+  // The font size is a pure function of the text; derive it instead of
+  // adjusting state in an effect.
+  const currentFont = useMemo(() => {
     const lineBreaks = text.split("\n").length - 1;
     const newSize = numerator / (text.length * denominator + 28 * lineBreaks);
-    if (newSize < fontSize) {
-      setCurrentFont(newSize);
-    }
-  };
-
-  useEffect(() => {
-    adjustFontSize();
-  }, [text, language]);
+    return newSize < fontSize ? newSize : fontSize;
+  }, [text, language, fontSize, numerator, denominator]);
 
   return <Text style={[styles, { fontSize: currentFont }]}>{text}</Text>;
 };

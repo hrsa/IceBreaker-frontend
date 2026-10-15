@@ -1,5 +1,5 @@
 import { useCategoryStore } from "@/src/stores/categoryStore";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Text, FlatList, View, Dimensions } from "react-native";
 import { useCommonStyles } from "@/constants/Styles";
 import { Category } from "@/src/types/entities";
@@ -31,13 +31,16 @@ export default function CategoriesScreen() {
   useEffect(() => {
     setStep("categories");
     getCategories();
-    setSelectedCategories([]);
-    setIsLoading(false);
   }, [step]);
 
-  useFocusEffect(() => {
-    setStep("categories");
-  });
+  useFocusEffect(
+    useCallback(() => {
+      setStep("categories");
+      // Reset transient state when (re)entering the screen.
+      setSelectedCategories([]);
+      setIsLoading(false);
+    }, [setStep])
+  );
 
   useEffect(() => {
     if (!profile) {

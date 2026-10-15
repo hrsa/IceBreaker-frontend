@@ -8,12 +8,13 @@ module.exports = defineConfig([
     ignores: ["dist/*"],
   },
   {
-    // New React Compiler-era rules introduced with eslint-config-expo 57.
-    // They flag long-standing patterns in the codebase; downgrade to
-    // warnings until they are fixed file by file (see plans/).
+    // React Compiler-era rules from eslint-config-expo 57; the flagged
+    // patterns were fixed in the animation/effects refactor. The few
+    // remaining sites carry justified inline eslint-disable comments
+    // (Reanimated SharedValue worklet API, web hydration pattern).
     rules: {
-      "react-hooks/set-state-in-effect": "warn",
-      "react-hooks/immutability": "warn",
+      "react-hooks/set-state-in-effect": "error",
+      "react-hooks/immutability": "error",
     },
   },
 ]);

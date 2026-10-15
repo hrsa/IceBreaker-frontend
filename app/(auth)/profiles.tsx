@@ -1,5 +1,5 @@
 import { logger } from "@/src/helpers/logger";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { View, Text, TouchableOpacity, TextInput, FlatList, Dimensions } from "react-native";
@@ -36,10 +36,15 @@ export default function ProfilesScreen() {
   const isLoading = useProfileStore(state => state.isLoading);
   const profileStore = useProfileStore();
   const { getProfiles, createProfile, deleteProfile } = profileStore;
-  const [localProfiles, setLocalProfiles] = useState<Profile[]>([]);
   const [newProfileName, setNewProfileName] = useState("");
   const [modalError, setModalError] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+
+  // Derived directly from the store; no local mirror needed.
+  const localProfiles = useMemo(
+    () => (Array.isArray(profiles) ? profiles.filter((profile): profile is Profile => profile !== null) : []),
+    [profiles]
+  );
 
   const { draggingIndex, showTrashZone, translateX, translateY, trashZoneAnimatedStyle, getGestureHandlerProps, canItemBeClicked } =
     useDragGesture({
@@ -61,13 +66,6 @@ export default function ProfilesScreen() {
   useFocusEffect(() => {
     setStep("profiles");
   });
-
-  useEffect(() => {
-    if (profiles) {
-      const validProfiles = Array.isArray(profiles) ? profiles.filter((profile): profile is Profile => profile !== null) : [];
-      setLocalProfiles(validProfiles);
-    }
-  }, [profiles]);
 
   const handleNewProfileNameChange = (text: string) => {
     setNewProfileName(text);

@@ -72,25 +72,22 @@ export default function GameScreen() {
   });
 
   useEffect(() => {
-    const getCards = async () => await getRandomCards(3, includeArchived, includeLoved);
-
-    if (!cards) return;
-    let currentLength = cards.length;
-    if (currentLength < 3) {
-      getCards();
+    if (cards && cards.length < 3) {
+      getRandomCards(3, includeArchived, includeLoved);
     }
-
-    if (cards.length <= currentLength) return;
   }, [cards, includeArchived, includeLoved]);
 
   const handleCardFlipped = (isFlipped: boolean) => {
     setCardFlipped(isFlipped);
+    // SharedValue assignment is the documented Reanimated API.
+    // eslint-disable-next-line react-hooks/immutability
     buttonsOpacity.value = withTiming(isFlipped ? 1 : 0, { duration: 300 });
   };
 
   const handleCardDragged = (dragging: boolean) => {
     setIsDragging(dragging);
     if (cardFlipped) {
+      // eslint-disable-next-line react-hooks/immutability
       buttonsOpacity.value = withTiming(dragging ? 0 : 1, { duration: 150 });
     }
   };
@@ -98,18 +95,21 @@ export default function GameScreen() {
   const handleCardPreference = async (card: Card | null, action: PreferenceAction) => {
     if (!card) return;
     await updateCardPreference(card, action);
-    if (card.cardPreference) {
-      card.cardPreference.status = getStatusFromAction(action);
-    } else {
-      card.cardPreference = {
-        cardId: card.id,
-        status: getStatusFromAction(action),
-        profileId: profile!.id,
-        lastInteractionAt: new Date(),
-        id: "temporaryid",
-      };
-    }
-    setLastCard(card);
+
+    // Keep an immutable snapshot of the card with its new preference state
+    // for the undo button; never mutate the store-held card object.
+    const preference: Card["cardPreference"] = card.cardPreference
+      ? { ...card.cardPreference, status: getStatusFromAction(action) }
+      : {
+          cardId: card.id,
+          status: getStatusFromAction(action),
+          profileId: profile!.id,
+          lastInteractionAt: new Date(),
+          id: "temporaryid",
+        };
+    const updatedCard: Card = { ...card, cardPreference: preference };
+
+    setLastCard(updatedCard);
     setCurrentCard(getFirstCard());
   };
 

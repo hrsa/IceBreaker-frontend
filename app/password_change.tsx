@@ -1,5 +1,5 @@
 import { logger } from "@/src/helpers/logger";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,40 +17,36 @@ export default function PasswordChangeScreen() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const { alert } = useAlert();
 
   const resetPassword = useAuthStore(state => state.resetPassword);
 
-  useEffect(() => {
-    if (params.token) {
-      setToken(params.token as string);
-    } else {
-      setError(t("password_change:errors:missing_token"));
-    }
-  }, [params]);
+  // The token and its error are derived from the route params, not state.
+  const token = typeof params.token === "string" ? params.token : null;
+  const missingTokenError = token ? null : t("password_change:errors:missing_token");
+  const error = formError ?? missingTokenError;
 
   const handlePasswordChange = async () => {
-    setError(null);
+    setFormError(null);
 
     if (!newPassword || !confirmPassword) {
-      setError(t("password_change:errors:fill_all_fields"));
+      setFormError(t("password_change:errors:fill_all_fields"));
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError(t("password_change:errors:password_mismatch"));
+      setFormError(t("password_change:errors:password_mismatch"));
       return;
     }
 
     if (newPassword.length < 6) {
-      setError(t("password_change:errors:password_too_short"));
+      setFormError(t("password_change:errors:password_too_short"));
       return;
     }
 
     if (!token) {
-      setError(t("password_change:errors:missing_token"));
+      setFormError(t("password_change:errors:missing_token"));
       return;
     }
 
@@ -66,7 +62,7 @@ export default function PasswordChangeScreen() {
       ]);
     } catch (error) {
       logger.error("Password change error:", error);
-      setError(t("password_change:errors:change_failed"));
+      setFormError(t("password_change:errors:change_failed"));
     } finally {
       setIsSubmitting(false);
     }
