@@ -18,6 +18,10 @@ interface ProfileBlobProps {
   canItemBeClicked: () => boolean;
 }
 
+// Blob is 300 wide; the name label has paddingHorizontal 16 each side and is
+// rendered in bold uppercase (wide glyphs).
+const PROFILE_LABEL_WIDTH = 300 - 32;
+
 const ProfileBlob: FC<ProfileBlobProps> = ({
   profile,
   index,
@@ -58,7 +62,15 @@ const ProfileBlob: FC<ProfileBlobProps> = ({
     <GestureDetector key={profile.id} {...getGestureHandlerProps(index)}>
       <Animated.View style={[styles.profileBlob, animatedStyle]}>
         <TouchableOpacity style={styles.profileBlobContent} onPress={onProfilePress} activeOpacity={0.7}>
-          <AdaptiveText text={profile.name} fontSize={32} numerator={400} denominator={0.8} styles={styles.profileName} />
+          <AdaptiveText
+            text={profile.name}
+            styles={styles.profileName}
+            maxFontSize={32}
+            minFontSize={18}
+            maxLines={2}
+            width={PROFILE_LABEL_WIDTH}
+            glyphWidthRatio={0.65}
+          />
           <Image source={getProfileImage(profile.name)} style={styles.profileImage} />
         </TouchableOpacity>
       </Animated.View>

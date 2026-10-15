@@ -1,27 +1,35 @@
 import { StyleProp, Text, TextStyle } from "react-native";
-import { FC, useMemo } from "react";
-import { useLanguageStore } from "@/src/stores/languageStore";
+import { FC } from "react";
+import { estimateFontSize } from "@/src/helpers/adaptive-text";
 
 interface AdaptiveTextProps {
-  fontSize: number;
   text: string;
   styles: StyleProp<TextStyle>;
-  numerator?: number;
-  denominator?: number;
+  /** Preferred size for short text. */
+  maxFontSize: number;
+  /** Readability floor; longer text is truncated instead of shrinking further. */
+  minFontSize: number;
+  /** Maximum rendered lines before truncation. */
+  maxLines: number;
+  /** Available text width in logical pixels. */
+  width: number;
+  /** Average glyph advance / fontSize; ~0.55 Merriweather regular, ~0.65 bold uppercase. */
+  glyphWidthRatio?: number;
 }
 
-const AdaptiveText: FC<AdaptiveTextProps> = ({ fontSize, text, styles, numerator = 4300, denominator = 0.7 }) => {
-  const language = useLanguageStore(state => state.language);
+/**
+ * Sizes text down to fit a known width and line budget (see
+ * `estimateFontSize`). Falls back to ellipsis at `minFontSize`, and caps OS
+ * font scaling so user accessibility settings cannot break the fit.
+ */
+const AdaptiveText: FC<AdaptiveTextProps> = ({ text, styles, maxFontSize, minFontSize, maxLines, width, glyphWidthRatio }) => {
+  const fontSize = estimateFontSize(text, { width, maxFontSize, minFontSize, maxLines, glyphWidthRatio });
 
-  // The font size is a pure function of the text; derive it instead of
-  // adjusting state in an effect.
-  const currentFont = useMemo(() => {
-    const lineBreaks = text.split("\n").length - 1;
-    const newSize = numerator / (text.length * denominator + 28 * lineBreaks);
-    return newSize < fontSize ? newSize : fontSize;
-  }, [text, language, fontSize, numerator, denominator]);
-
-  return <Text style={[styles, { fontSize: currentFont }]}>{text}</Text>;
+  return (
+    <Text style={[styles, { fontSize }]} numberOfLines={maxLines} ellipsizeMode="tail" maxFontSizeMultiplier={1.3}>
+      {text}
+    </Text>
+  );
 };
 
 export default AdaptiveText;

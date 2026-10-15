@@ -36,7 +36,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, isSelected, toggl
       <View style={styles.categoryCard}>
         <Image source={getCategoryImage(category.id)} style={styles.categoryImage} />
 
-        <AdaptiveText text={name} fontSize={32} styles={styles.categoryText} />
+        <AdaptiveText text={name} styles={styles.categoryText} maxFontSize={32} minFontSize={18} maxLines={2} width={280} glyphWidthRatio={0.6} />
       </View>
     </TouchableOpacity>
   );

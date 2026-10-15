@@ -2,13 +2,13 @@ import { useCommonStyles } from "@/constants/Styles";
 import { Dimensions, StyleSheet } from "react-native";
 import config from "@/src/config/config";
 
-export const useCardStyles = () => {
-  const commonStyles = useCommonStyles();
-  const { width: screenWidth } = Dimensions.get("window");
-  const isNarrowScreen = screenWidth < 600;
-  const shouldRotateCard = config.isMobile || isNarrowScreen;
-  const cardColor = "rgb(181,127,87)";
-  const cardDimensions = shouldRotateCard
+/** Card orientation flag for the current screen; shared by the styles and callers that
+ * need the text constraints (e.g. AdaptiveText). */
+const shouldRotateCard = () => config.isMobile || Dimensions.get("window").width < 600;
+
+/** Card size for the current screen. */
+export const getCardDimensions = () =>
+  shouldRotateCard()
     ? {
         width: 300,
         height: 450,
@@ -17,6 +17,12 @@ export const useCardStyles = () => {
         width: 450,
         height: 300,
       };
+
+export const useCardStyles = () => {
+  const commonStyles = useCommonStyles();
+  const cardColor = "rgb(181,127,87)";
+  const rotateCard = shouldRotateCard();
+  const cardDimensions = getCardDimensions();
 
   return StyleSheet.create({
     ...commonStyles,
@@ -31,7 +37,7 @@ export const useCardStyles = () => {
     },
     card: {
       ...cardDimensions,
-      transform: [{ rotate: shouldRotateCard ? "90deg" : "0deg" }],
+      transform: [{ rotate: rotateCard ? "90deg" : "0deg" }],
       position: "relative",
     },
     cardFlippedContent: {
@@ -40,8 +46,8 @@ export const useCardStyles = () => {
       alignItems: "center",
     },
     cardStatusBadge: {
-      top: shouldRotateCard ? cardDimensions.height * 0.2 : 15,
-      left: shouldRotateCard ? cardDimensions.width : cardDimensions.width - 75,
+      top: rotateCard ? cardDimensions.height * 0.2 : 15,
+      left: rotateCard ? cardDimensions.width : cardDimensions.width - 75,
       opacity: 0.5,
       position: "absolute",
     },
@@ -62,8 +68,8 @@ export const useCardStyles = () => {
       position: "relative",
       alignItems: "center",
       justifyContent: "flex-end",
-      marginTop: shouldRotateCard ? -74 : 0,
-      marginLeft: shouldRotateCard ? -1 : 0,
+      marginTop: rotateCard ? -74 : 0,
+      marginLeft: rotateCard ? -1 : 0,
     },
     cardImage: {
       width: 450,

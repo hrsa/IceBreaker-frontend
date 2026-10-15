@@ -10,7 +10,7 @@ import config from "@/src/config/config";
 import { useLanguageStore } from "@/src/stores/languageStore";
 import AdaptiveText from "./AdaptiveText";
 import Animated, { runOnJS } from "react-native-reanimated";
-import { useCardStyles } from "@/src/styles/Card";
+import { getCardDimensions, useCardStyles } from "@/src/styles/Card";
 
 interface GameCardProps {
   card: Card;
@@ -26,6 +26,13 @@ const SWIPE_THRESHOLD = shouldRotateCard ? 200 : 400;
 const ROTATION_MAGNITUDE = 0.2;
 const DRAG_THRESHOLD = 10;
 
+// Card text constraints (Merriweather, glyph ratio ~0.55).
+const QUESTION_FONT_SIZE = 26;
+const QUESTION_MIN_FONT_SIZE = 14;
+const CATEGORY_FONT_SIZE = 32;
+const CATEGORY_MIN_FONT_SIZE = 18;
+const LINE_HEIGHT_RATIO = 1.3;
+
 const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDragged }) => {
   const { getCategoryImage } = useCardImages();
   const getLocalizedQuestion = useLanguageStore(state => state.getLocalizedCardField(card, "question"));
@@ -34,6 +41,8 @@ const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDrag
   const [isDragging, setIsDragging] = useState(false);
 
   const styles = useCardStyles();
+  const cardDimensions = getCardDimensions();
+  const questionMaxLines = Math.floor((cardDimensions.height * 0.95) / (QUESTION_FONT_SIZE * LINE_HEIGHT_RATIO));
   const { translateX, translateY, rotationAngle, cardAnimatedStyle, runEntranceAnimation, animateSwipeOut, animateSpringBack } =
     useCardAnimations();
 
@@ -141,10 +150,11 @@ const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDrag
                 <View style={styles.cardTextContainer}>
                   <AdaptiveText
                     text={getLocalizedQuestion}
-                    fontSize={26}
-                    numerator={3600}
-                    denominator={0.75}
                     styles={styles.cardText}
+                    maxFontSize={QUESTION_FONT_SIZE}
+                    minFontSize={QUESTION_MIN_FONT_SIZE}
+                    maxLines={questionMaxLines}
+                    width={cardDimensions.width * 0.95}
                   ></AdaptiveText>
                 </View>
               </>
@@ -153,10 +163,12 @@ const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDrag
                 <Image style={styles.cardImage} source={getCategoryImage(card.category!.id)} />
                 <AdaptiveText
                   text={getLocalizedCategoryName}
-                  fontSize={32}
-                  numerator={1000}
-                  denominator={0.75}
                   styles={styles.cardCategoryText}
+                  maxFontSize={CATEGORY_FONT_SIZE}
+                  minFontSize={CATEGORY_MIN_FONT_SIZE}
+                  maxLines={2}
+                  width={cardDimensions.width - 40}
+                  glyphWidthRatio={0.6}
                 />
               </View>
             )}
