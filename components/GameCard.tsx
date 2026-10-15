@@ -26,12 +26,16 @@ const SWIPE_THRESHOLD = shouldRotateCard ? 200 : 400;
 const ROTATION_MAGNITUDE = 0.2;
 const DRAG_THRESHOLD = 10;
 
-// Card text constraints (Merriweather, glyph ratio ~0.55).
+// Card text constraints. The question shrinks to a readable floor; anything
+// that still overflows the card window at that size flows vertically
+// (credits mode) instead of truncating.
 const QUESTION_FONT_SIZE = 26;
-const QUESTION_MIN_FONT_SIZE = 14;
+const QUESTION_MIN_FONT_SIZE = 20;
+// Measured on device: rendered Merriweather averages ~0.8x the font size.
+const QUESTION_GLYPH_RATIO = 0.8;
+const LINE_HEIGHT_RATIO = 1.3;
 const CATEGORY_FONT_SIZE = 32;
 const CATEGORY_MIN_FONT_SIZE = 18;
-const LINE_HEIGHT_RATIO = 1.3;
 
 const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDragged }) => {
   const { getCategoryImage } = useCardImages();
@@ -42,7 +46,10 @@ const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDrag
 
   const styles = useCardStyles();
   const cardDimensions = getCardDimensions();
-  const questionMaxLines = Math.floor((cardDimensions.height * 0.95) / (QUESTION_FONT_SIZE * LINE_HEIGHT_RATIO));
+  const questionWindow = cardDimensions.height * 0.8;
+  // Line budget at the preferred size; the estimate scales the font down to
+  // fit this budget before the credits flow takes over.
+  const questionLineBudget = Math.floor((questionWindow * 0.9) / (QUESTION_FONT_SIZE * LINE_HEIGHT_RATIO));
   const { translateX, translateY, rotationAngle, cardAnimatedStyle, runEntranceAnimation, animateSwipeOut, animateSpringBack } =
     useCardAnimations();
 
@@ -153,8 +160,11 @@ const GameCard: FC<GameCardProps> = ({ card, updatePreference, onFlipped, onDrag
                     styles={styles.cardText}
                     maxFontSize={QUESTION_FONT_SIZE}
                     minFontSize={QUESTION_MIN_FONT_SIZE}
-                    maxLines={questionMaxLines}
+                    maxLines={questionLineBudget}
+                    glyphWidthRatio={QUESTION_GLYPH_RATIO}
                     width={cardDimensions.width * 0.95}
+                    height={questionWindow}
+                    overflow="credits"
                   ></AdaptiveText>
                 </View>
               </>

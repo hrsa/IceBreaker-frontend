@@ -61,7 +61,6 @@ export const useCardStyles = () => {
       color: "white",
       textAlign: "center",
       width: cardDimensions.width * 0.95,
-      maxHeight: cardDimensions.height * 0.95,
     },
     cardImageContainer: {
       ...cardDimensions,
