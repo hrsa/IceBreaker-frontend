@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { isAxiosError } from "axios";
 import { User } from "@/src/types/entities";
 import {
   login,
@@ -62,17 +63,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       try {
         set({ isLoading: true, error: null });
         const response = await me();
-        if (response && response.id !== get().user?.id) {
-          set({ user: response });
-        }
         set({
+          user: response,
           isLoading: false,
         });
       } catch (error) {
+        const isAuthError =
+          isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403);
+        // Network errors and timeouts keep the stored token and user untouched;
+        // only an auth rejection clears the session.
         set({
           isLoading: false,
-          user: null,
-          accessToken: null,
+          ...(isAuthError ? { user: null, accessToken: null } : {}),
           error: error instanceof Error ? error.message : "My profile failed",
         });
         console.error("My profile error:", error);

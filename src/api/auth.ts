@@ -59,8 +59,10 @@ export const me = async (): Promise<User> => {
     return response.data;
   } catch (error) {
     console.error("GetMe error:", error);
-    await deleteToken();
-    if (isAxiosError(error) && error.response) {
+    if (isAxiosError(error) && error.response && (error.response.status === 401 || error.response.status === 403)) {
+      // Only an auth rejection invalidates the stored token.
+      // Network errors and timeouts must not log the user out.
+      await deleteToken();
       throw new Error(error.response.data.message || "My profile failed");
     }
     throw error;

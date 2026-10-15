@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -20,21 +20,10 @@ export default function LoginScreen() {
   const styles = useLoginStyles();
 
   const login = useAuthStore(state => state.login);
-  const getMe = useAuthStore(state => state.getMe);
   const isLoading = useAuthStore(state => state.isLoading);
   const error = useAuthStore(state => state.error);
   const clearError = useAuthStore(state => state.clearError);
   const { alert } = useAlert();
-
-  useEffect(() => {
-    const getMyProfile = async () =>
-      await getMe().then(() => {
-        if (useAuthStore.getState().user) {
-          router.replace("/");
-        }
-      });
-    getMyProfile();
-  }, []);
 
   const handleLogin = async () => {
     if (!email || !password) {

@@ -1,7 +1,19 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import config from "@/src/config/config";
 import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
+
+type UnauthorizedHandler = () => void;
+
+let unauthorizedHandler: UnauthorizedHandler | null = null;
+
+/**
+ * Registers the app-level reaction to a 401 from the API.
+ * Keeps navigation concerns out of the API layer.
+ */
+export const setUnauthorizedHandler = (handler: UnauthorizedHandler | null) => {
+  unauthorizedHandler = handler;
+};
 
 export async function createApiClient(): Promise<AxiosInstance> {
   const initialToken = await getToken();
@@ -24,6 +36,19 @@ export async function createApiClient(): Promise<AxiosInstance> {
       return config;
     },
     error => {
+      return Promise.reject(error);
+    }
+  );
+
+  apiClient.interceptors.response.use(
+    response => response,
+    async (error: AxiosError) => {
+      // A 401 on any endpoint (except login itself, where it just means
+      // wrong credentials) invalidates the stored session.
+      if (error.response?.status === 401 && error.config?.url !== "/auth/login") {
+        await deleteToken();
+        unauthorizedHandler?.();
+      }
       return Promise.reject(error);
     }
   );

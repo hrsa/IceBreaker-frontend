@@ -32,7 +32,7 @@ export default function AuthLayout() {
       if (!user) {
         try {
           await getMe();
-          if (!user) {
+          if (!useAuthStore.getState().user) {
             router.replace("/login");
           }
         } catch (error) {
