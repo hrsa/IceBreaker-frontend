@@ -1,3 +1,4 @@
+import { logger } from "@/src/helpers/logger";
 import { create } from 'zustand';
 import { Profile } from '@/src/types/entities';
 import { createProfile, deleteProfile, getProfiles, updateProfile } from '@/src/api/profile';
@@ -51,7 +52,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
         isLoading: false,
         error: error instanceof Error ? error.message : 'Profile creation failed',
       });
-      console.error('Profile creation error:', error);
+      logger.error('Profile creation error:', error);
     }
   },
 

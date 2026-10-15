@@ -1,3 +1,4 @@
+import { logger } from "@/src/helpers/logger";
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import config from "@/src/config/config";
 import { Platform } from "react-native";
@@ -16,14 +17,11 @@ export const setUnauthorizedHandler = (handler: UnauthorizedHandler | null) => {
 };
 
 export async function createApiClient(): Promise<AxiosInstance> {
-  const initialToken = await getToken();
-
   const apiClient: AxiosInstance = axios.create({
     baseURL: config.api.url,
     timeout: config.api.timeout,
     headers: {
       "Content-Type": "application/json",
-      ...(initialToken ? { Authorization: `Bearer ${initialToken}` } : {}),
     },
   });
 
@@ -65,7 +63,7 @@ export async function createApiClient(): Promise<AxiosInstance> {
             dataToLog[key] = value;
           });
         }
-        console.log("[Axios Request Debug]", {
+        logger.log("[Axios Request Debug]", {
           method: request.method,
           baseUrl: request.baseURL ? request.baseURL : "no base url",
           url: request.url ? request.url : "no url",
@@ -82,7 +80,7 @@ export async function createApiClient(): Promise<AxiosInstance> {
 
     apiClient.interceptors.response.use(
       response => {
-        console.log("[Axios Response Debug]", {
+        logger.log("[Axios Response Debug]", {
           status: response.status,
           url: response.config.url,
           headers: response.headers,
@@ -91,7 +89,7 @@ export async function createApiClient(): Promise<AxiosInstance> {
         return response;
       },
       error => {
-        console.log("[Axios Response Error Debug]", {
+        logger.log("[Axios Response Error Debug]", {
           error: error.message,
           status: error.response?.status,
           url: error.response?.config?.url,
@@ -120,7 +118,7 @@ export const storeToken = async (token: string) => {
     try {
       document.cookie = `bearerToken=${token}; Secure; SameSite=Strict; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT; domain=${window.location.hostname}`;
     } catch (error) {
-      console.error("Error storing token:", error);
+      logger.error("Error storing token:", error);
     }
   } else {
     await SecureStore.setItemAsync("accessToken", token);

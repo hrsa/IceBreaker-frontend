@@ -1,3 +1,4 @@
+import { logger } from "@/src/helpers/logger";
 import { Profile, Category, CardPreference, Card, PreferenceAction } from "@/src/types/entities";
 import { create } from "zustand";
 import { getRandomCards, RandomCardRequest, updateCardPreference } from "@/src/api/game";
@@ -49,7 +50,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   getRandomCards: async (limit = 1, includeArchived = false, includeLoved = true) => {
     set({ isLoading: true, error: null });
     if (!get().profile) {
-      console.error("No profile to get random cards for");
+      logger.error("No profile to get random cards for");
       return;
     }
     const profileId = get().profile!.id;
@@ -87,14 +88,14 @@ export const useGameStore = create<GameState>((set, get) => ({
       set({ isLoading: true, error: null });
       const profile = get().profile;
       if (!profile) {
-        console.error("No profile to update card preference");
+        logger.error("No profile to update card preference");
         return;
       }
       await updateCardPreference(card.id, profile.id, action);
       get().removeCard(card);
       set({ isLoading: false });
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       if (e instanceof Error) {
         set({ error: e.message });
       }

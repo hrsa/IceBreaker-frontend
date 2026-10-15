@@ -1,3 +1,4 @@
+import { logger } from "@/src/helpers/logger";
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -45,7 +46,7 @@ export default function RegisterScreen() {
       await register(email, password, name);
       router.replace("/");
     } catch (error) {
-      console.error("Registration error:", error);
+      logger.error("Registration error:", error);
     } finally {
       setIsSubmitting(false);
     }

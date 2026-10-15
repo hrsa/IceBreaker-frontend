@@ -1,3 +1,4 @@
+import { logger } from "@/src/helpers/logger";
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -49,7 +50,7 @@ export default function ForgotPasswordScreen() {
         },
       ]);
     } catch (error) {
-      console.error("Login error:", error);
+      logger.error("Login error:", error);
     } finally {
       setIsSubmitting(false);
     }

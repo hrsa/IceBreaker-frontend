@@ -1,6 +1,8 @@
+import { logger } from "@/src/helpers/logger";
 import { Card, CardPreference, PreferenceAction } from "@/src/types/entities";
 import { isAxiosError } from "axios";
 import { getApiClient } from "./apiClient";
+import { toApiError } from "./apiError";
 
 export interface RandomCardRequest {
   profileId: string;
@@ -21,14 +23,10 @@ export const getRandomCards = async (data: RandomCardRequest): Promise<RandomCar
     const response = await apiClient.post<RandomCardResponse>("/cards/random", data);
     return response.data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      if (error.response.status === 404) {
-        return { cards: [], hasViewedAllCards: true };
-      }
-
-      throw new Error(error.response.data.message || "Random card request failed");
+    if (isAxiosError(error) && error.response?.status === 404) {
+      return { cards: [], hasViewedAllCards: true };
     }
-    throw error;
+    throw toApiError(error, "Random card request failed");
   }
 };
 
@@ -38,10 +36,7 @@ export const updateCardPreference = async (cardId: string, profileId: string, ac
     const response = await apiClient.post<CardPreference>(`/card-preferences/${cardId}/profile/${profileId}/${action}`);
     return response.data;
   } catch (error) {
-    console.error("Random card request error:", error);
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Random card request failed");
-    }
-    throw error;
+    logger.error("Card preference update error:", error);
+    throw toApiError(error, "Card preference update failed");
   }
 };

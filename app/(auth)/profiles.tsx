@@ -1,3 +1,4 @@
+import { logger } from "@/src/helpers/logger";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -85,7 +86,7 @@ export default function ProfilesScreen() {
       setModalVisible(false);
       triggerHaptic("notification", { type: Haptics.NotificationFeedbackType.Success });
     } catch (error) {
-      console.error("Failed to create profile:", error);
+      logger.error("Failed to create profile:", error);
       alert(t("common:error"), t("profile:errors:creation_failed"));
     }
   };
@@ -95,7 +96,7 @@ export default function ProfilesScreen() {
       await deleteProfile(profileId);
       triggerHaptic("notification", { type: Haptics.NotificationFeedbackType.Success });
     } catch (error) {
-      console.error("Failed to delete profile:", error);
+      logger.error("Failed to delete profile:", error);
       alert(t("common:error"), t("profile:errors:delete_failed"));
     }
   };

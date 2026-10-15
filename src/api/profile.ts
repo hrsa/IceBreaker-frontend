@@ -1,6 +1,7 @@
+import { logger } from "@/src/helpers/logger";
 import { Profile } from "@/src/types/entities";
-import { isAxiosError } from "axios";
 import { getApiClient } from "./apiClient";
+import { toApiError } from "./apiError";
 
 interface ProfileRequest {
   name: string;
@@ -12,11 +13,8 @@ export const getProfiles = async (): Promise<Profile[]> => {
     const response = await apiClient.get<Profile[]>("/profiles");
     return response.data;
   } catch (error) {
-    console.error("Profiles request error:", error);
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Profile request failed");
-    }
-    throw error;
+    logger.error("Profiles request error:", error);
+    throw toApiError(error, "Profile request failed");
   }
 };
 
@@ -26,11 +24,8 @@ export const createProfile = async (data: ProfileRequest): Promise<Profile> => {
     const response = await apiClient.post<Profile>("/profiles", data);
     return response.data;
   } catch (error) {
-    console.error("Profile creation error:", error);
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Profile creation failed");
-    }
-    throw error;
+    logger.error("Profile creation error:", error);
+    throw toApiError(error, "Profile creation failed");
   }
 };
 
@@ -40,11 +35,8 @@ export const updateProfile = async (profileId: string, data: ProfileRequest): Pr
     const response = await apiClient.patch<Profile>(`/profiles/${profileId}`, data);
     return response.data;
   } catch (error) {
-    console.error("Profile update error:", error);
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Profile update failed");
-    }
-    throw error;
+    logger.error("Profile update error:", error);
+    throw toApiError(error, "Profile update failed");
   }
 };
 
@@ -54,10 +46,7 @@ export const deleteProfile = async (profileId: string): Promise<boolean> => {
     const response = await apiClient.delete<boolean>(`/profiles/${profileId}`);
     return response.status === 204;
   } catch (error) {
-    console.error("Profile update error:", error);
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Profile update failed");
-    }
-    throw error;
+    logger.error("Profile delete error:", error);
+    throw toApiError(error, "Profile delete failed");
   }
 };

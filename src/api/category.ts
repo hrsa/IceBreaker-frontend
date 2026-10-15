@@ -1,6 +1,7 @@
+import { logger } from "@/src/helpers/logger";
 import { Category } from "@/src/types/entities";
-import { isAxiosError } from "axios";
 import { getApiClient } from "./apiClient";
+import { toApiError } from "./apiError";
 
 export const getCategories = async (): Promise<Category[]> => {
   try {
@@ -8,10 +9,7 @@ export const getCategories = async (): Promise<Category[]> => {
     const response = await apiClient.get<Category[]>("/categories");
     return response.data;
   } catch (error) {
-    console.error("Categories request error:", error);
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Categories request failed");
-    }
-    throw error;
+    logger.error("Categories request error:", error);
+    throw toApiError(error, "Categories request failed");
   }
 };

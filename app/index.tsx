@@ -1,3 +1,4 @@
+import { logger } from "@/src/helpers/logger";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { View, Text, Image } from "react-native";
@@ -31,7 +32,7 @@ export default function HomeScreen() {
       try {
         await getMe();
       } catch (error) {
-        console.error("Failed to get user:", error);
+        logger.error("Failed to get user:", error);
       } finally {
         if (!cancelled) {
           // A surviving access token means the session is still valid
@@ -54,7 +55,7 @@ export default function HomeScreen() {
       await logout();
       router.replace("/login");
     } catch (error) {
-      console.error("Logout error:", error);
+      logger.error("Logout error:", error);
     }
   };
 

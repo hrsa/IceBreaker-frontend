@@ -1,18 +1,20 @@
-import { useEffect, useState } from 'react';
-import { useColorScheme as useRNColorScheme } from 'react-native';
+import { useEffect, useState } from "react";
+import { useColorScheme as useRNColorScheme } from "react-native";
+
+import type { AppColorScheme } from "./useColorScheme";
 
 /**
  * To support static rendering, this value needs to be re-calculated on the client side for web
  */
-export function useColorScheme() {
+export function useColorScheme(): AppColorScheme {
   const [hasHydrated, setHasHydrated] = useState(false);
   const colorScheme = useRNColorScheme(); // Call hook unconditionally
-  const [initialColorScheme] = useState(colorScheme || 'light'); // Store initial value
+  const normalized: AppColorScheme = colorScheme === "dark" ? "dark" : colorScheme === "light" ? "light" : null;
+  const [initialColorScheme] = useState<AppColorScheme>(normalized || "light"); // Store initial value
 
   useEffect(() => {
     setHasHydrated(true);
   }, []);
 
-  return hasHydrated ? colorScheme : initialColorScheme;
+  return hasHydrated ? normalized : initialColorScheme;
 }
-

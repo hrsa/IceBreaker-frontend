@@ -1,3 +1,4 @@
+import { logger } from "@/src/helpers/logger";
 import { Dimensions, Platform } from "react-native";
 import * as Haptics from "expo-haptics";
 import { useSharedValue, withTiming, withSpring, useAnimatedStyle, Easing, interpolate, runOnJS } from "react-native-reanimated";
@@ -35,7 +36,7 @@ const triggerHapticFeedback = () => {
   try {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   } catch (error) {
-    console.log("Haptic feedback not available", error);
+    logger.log("Haptic feedback not available", error);
   }
 };
 

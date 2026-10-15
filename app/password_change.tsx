@@ -1,3 +1,4 @@
+import { logger } from "@/src/helpers/logger";
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -64,7 +65,7 @@ export default function PasswordChangeScreen() {
         },
       ]);
     } catch (error) {
-      console.error("Password change error:", error);
+      logger.error("Password change error:", error);
       setError(t("password_change:errors:change_failed"));
     } finally {
       setIsSubmitting(false);

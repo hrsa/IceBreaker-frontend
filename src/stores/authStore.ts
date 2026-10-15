@@ -1,3 +1,4 @@
+import { logger } from "@/src/helpers/logger";
 import { create } from "zustand";
 import { isAxiosError } from "axios";
 import { User } from "@/src/types/entities";
@@ -77,7 +78,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           ...(isAuthError ? { user: null, accessToken: null } : {}),
           error: error instanceof Error ? error.message : "My profile failed",
         });
-        console.error("My profile error:", error);
+        logger.error("My profile error:", error);
       }
     }
   },
@@ -99,7 +100,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isLoading: false,
         error: error instanceof Error ? error.message : "My profile failed",
       });
-      console.error("My profile error:", error);
+      logger.error("My profile error:", error);
     }
   },
 

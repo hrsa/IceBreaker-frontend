@@ -1,3 +1,4 @@
+import { logger } from "@/src/helpers/logger";
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -36,7 +37,7 @@ export default function LoginScreen() {
       await login(email, password);
       router.replace("/");
     } catch (error) {
-      console.error("Login error:", error);
+      logger.error("Login error:", error);
     } finally {
       setIsSubmitting(false);
     }

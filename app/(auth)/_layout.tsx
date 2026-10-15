@@ -1,3 +1,4 @@
+import { logger } from "@/src/helpers/logger";
 import { Stack, useRouter, SplashScreen } from "expo-router";
 import { useAuthStore } from "@/src/stores/authStore";
 import { useEffect, useState } from "react";
@@ -36,7 +37,7 @@ export default function AuthLayout() {
             router.replace("/login");
           }
         } catch (error) {
-          console.error("Auth check failed:", error);
+          logger.error("Auth check failed:", error);
           router.replace("/login");
         } finally {
           setIsAuthReady(true);

@@ -1,3 +1,4 @@
+import { logger } from "@/src/helpers/logger";
 import { useState } from "react";
 import { Dimensions, Platform } from "react-native";
 import { Gesture } from "react-native-gesture-handler";
@@ -147,6 +148,6 @@ export const triggerHaptic = (
       Haptics.selectionAsync();
     }
   } catch (error) {
-    console.log("Haptic feedback not available", error);
+    logger.log("Haptic feedback not available", error);
   }
 };
